@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1751525168203,
+      "tag": "0000_light_ulik",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751526997000,
+      "tag": "0001_sticky_xorn",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751530008332,
+      "tag": "0002_complete_silverclaw",
+      "breakpoints": true
+    }
+  ]
+}

@@ -4,14 +4,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc -b && node dist/server.js"
+    "dev": "tsc -b && nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^17.0.1",
+    "drizzle-orm": "^0.44.2",
+    "postgres": "^3.4.7",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.52.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.4",
+    "nodemon": "^3.1.10"
   }
 }

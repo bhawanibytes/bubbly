@@ -32,10 +32,10 @@ app.ws("/*", {
 
 registerAuthRoutes(app)
 
-// app.any("/*", (res, req) => {
-//   req
-//     res.end("notthing to see here");
-//   })
+app.any("/*", (res, req) => {
+  req
+    res.end("notthing to see here");
+  })
 
 app.listen(port, (token) => {
   if (token) {
