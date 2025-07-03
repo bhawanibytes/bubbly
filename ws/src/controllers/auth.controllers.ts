@@ -1,18 +1,19 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { users } from "../db/schema/users.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
+import { jsonBody } from "../utils/jsonBody.js";
 
-interface SignupBody {
+interface TypeBody {
   name: string;
   number: string;
 }
 
-export async function signup(body: SignupBody, req: UWSReq, res: UWSRes) {
+export async function signup( res: UWSRes, req: UWSReq ) {
   try {
-    const { name, number } = body;
+    const body =  await jsonBody(res) as unknown as TypeBody;
+    const { name, number } = body
     if (!name || !number) {
-      console.log("arg issue");
       return { status: "failed", message: "all arg required" };
     } else {
       const userExists = await db
@@ -41,10 +42,10 @@ export async function signup(body: SignupBody, req: UWSReq, res: UWSRes) {
   }
 }
 
-export async function login(body: any, req: UWSReq, res: UWSRes) {
+export async function login(res: UWSRes, req: UWSReq ) {
   try {
+    const body = await jsonBody(res) as unknown as TypeBody;
     const { number } = body;
-    console.log(number)
     if (!number) {
       return { status: "failed", message: "all arg required" };
     } else {
@@ -61,6 +62,6 @@ export async function login(body: any, req: UWSReq, res: UWSRes) {
   }
 }
 
-export function forgetPasscode(body: any, req: UWSReq, res: UWSRes) {
+export async function forgetPasscode(res: UWSRes, req: UWSReq) {
   // ...
 }

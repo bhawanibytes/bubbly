@@ -1,12 +1,10 @@
 import { UWSReq, UWSRes } from "../types/types.uws.js";
 
 export function withSafeAsync(asyncHandler: (
-    body: any,
-    req: UWSReq,
-    res: UWSRes,
-    aborted: boolean
+  res: UWSRes,
+  req: UWSReq,    
   ) => Promise<any> ) {
-  return (body :any , req: UWSReq, res:UWSRes) => {
+  return ( res:UWSRes, req: UWSReq) => {
     let aborted = false;
     res.onAborted(() => {
       aborted = true;
@@ -14,8 +12,7 @@ export function withSafeAsync(asyncHandler: (
 
     (async () => {
       try {
-        const result = await asyncHandler(body, req, res, aborted);
-
+        const result = await asyncHandler( res, req);
         if (!aborted) {
           res.cork(() => {
             res.writeHeader("Content-Type", "application/json");
