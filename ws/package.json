@@ -4,13 +4,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsc -b && nodemon dist/server.js"
+    "dev": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.0.1",
     "drizzle-orm": "^0.44.2",
@@ -19,7 +20,10 @@
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.52.0"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.0.10",
     "drizzle-kit": "^0.31.4",
-    "nodemon": "^3.1.10"
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }
