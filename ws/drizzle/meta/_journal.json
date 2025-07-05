@@ -22,6 +22,20 @@
       "when": 1751530008332,
       "tag": "0002_complete_silverclaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1751723522150,
+      "tag": "0003_freezing_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1751751795204,
+      "tag": "0004_lucky_boomer",
+      "breakpoints": true
     }
   ]
 }
