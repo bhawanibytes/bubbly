@@ -2,7 +2,7 @@ export interface Result<T = unknown, E = unknown> {
   success: boolean;
   status: StatusCode;
   message: string;
-  headers: Record<string, string>;
+  headers?: Record<string, string>;
   data?: T;
   error?: E;
 }
