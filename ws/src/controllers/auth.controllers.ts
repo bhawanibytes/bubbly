@@ -8,6 +8,7 @@ import { accessExpiry, refreshExpiry, rounds, secret } from "../configs/env.conf
 import { Result } from "../types/type.res.js";
 import generateOtp from "../utils/generateOtp.js";
 import sendOtp from "../configs/twilio.config.js";
+import cache from "../configs/redis.config.js";
 
 interface SignupBody {
   name: string;
@@ -67,6 +68,9 @@ export async function signup(
     const otp = generateOtp()
     //send otp
     const otpServiceRes = await sendOtp(otp, number)
+    // save otp in cache
+    const otpSave= await cache.set(number, otp)
+    console.log(otpSave)
     // in end return the response once user is created
     return {
       success: true,
@@ -84,6 +88,55 @@ export async function signup(
       message: "Something Went Wrong",
       error,
     } as Result;
+  }
+}
+
+export async function verifySignup(res: UWSRes, req: UWSReq, body: any): Promise<any> {
+  const { number, userOtp } = body
+  // return if all details are not provided
+  if (!number || !userOtp) {
+    return {
+      success: false,
+      status: "400 Bad Request",
+      message: "All fields required",
+      error: null,
+    } as Result;
+  }
+  try {
+    const cachedOtp = await cache.get(number)
+    console.log("cachedOtp:", cachedOtp)
+    // return if otp isn't in cache
+    if (!cachedOtp) {
+      return {
+      success: false,
+      status: "404 Not Found",
+      message: "Otp is not found.",
+      error: null,
+    } as Result;
+    }
+    // return if otp don't match
+    if (!cachedOtp == userOtp) {
+      return {
+      success: false,
+      status: "401 Unauthorized",
+      message: "Wrong otp.",
+      error: null,
+    } as Result;
+    }
+    // save user as isVerifiedn true
+    await db.update(users).set({ isVerified: true}).where(eq(users.number, number))
+
+    // return success
+    return {
+      success: true,
+      status: "202 Accepted",
+      message: "Otp matched.",
+      data: null,
+    } as Result;
+    
+  } catch (error) {
+    console.log(error);
+    return { success: false, message: "Something Went Wrong", error } as Result;
   }
 }
 
