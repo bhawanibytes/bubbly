@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1751525168203,
-      "tag": "0000_light_ulik",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1751526997000,
-      "tag": "0001_sticky_xorn",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1751530008332,
-      "tag": "0002_complete_silverclaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1751723522150,
-      "tag": "0003_freezing_siren",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1751751795204,
-      "tag": "0004_lucky_boomer",
+      "when": 1752077723322,
+      "tag": "0000_fast_mephisto",
       "breakpoints": true
     }
   ]
