@@ -6,6 +6,8 @@ import { users } from "../db/schema/users.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
 import { accessExpiry, refreshExpiry, rounds, secret } from "../configs/env.config.js";
 import { Result } from "../types/type.res.js";
+import generateOtp from "../utils/generateOtp.js";
+import sendOtp from "../configs/twilio.config.js";
 
 interface SignupBody {
   name: string;
@@ -28,7 +30,7 @@ export async function signup(
   body: any
 ): Promise<any> {
   const { name, number, pin } = body as SignupBody;
-  // return if all details are not provided
+  // return if any details are not provided
   if (!name || !number || !pin) {
     return {
       success: false,
@@ -38,33 +40,41 @@ export async function signup(
     } as Result;
   }
   try {
-    // check if user already exists and returns
-    const userExists = await db
+    // check if user already exists and verified then returns
+    const [userExists] = await db
       .select()
       .from(users)
       .where(eq(users.number, number));
-    if (userExists.length > 0) {
+    if (userExists?.isVerified ) {
       return {
         success: false,
         status: "409 Conflict",
         message: "User already exists",
       } as Result;
     }
-
-    // hash pin and save user to db
-    const hashedPin = await bcrypt.hash(pin, rounds);
-    const [insertedUser] = await db.insert(users).values({
-      name,
-      number,
-      pin: hashedPin,
-    });
-
+    // save user if user is not saved in db
+    if (!userExists){
+      // hash pin and save user to db
+      const hashedPin = await bcrypt.hash(pin, rounds);
+      const [insertedUser] = await db.insert(users).values({
+        name,
+        number,
+        pin: hashedPin,
+        isVerified: false,
+      });
+    }
+    // generate otp
+    const otp = generateOtp()
+    //send otp
+    const otpServiceRes = await sendOtp(otp, number)
     // in end return the response once user is created
     return {
       success: true,
       status: "201 Created",
-      message: "You signed up",
-      data: null,
+      message: "You signed up.",
+      data: {
+        otpServiceRes,
+      },
     } as Result;
   } catch (error) {
     console.log(error);
