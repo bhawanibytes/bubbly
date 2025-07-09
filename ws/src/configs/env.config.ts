@@ -48,3 +48,9 @@ if (!process.env.TWILIO_VIRTUAL_NUMBER){
     throw new Error ("TWILIO_VIRTUAL_NUMBER are not in env")
 }
 export const twilioVirtualNumber = process.env.TWILIO_VIRTUAL_NUMBER
+
+// REDIS_URL
+if (!process.env.REDIS_URL){
+    throw new Error ("REDIS_URL are not in env")
+}
+export const redisUrl = process.env.REDIS_URL
