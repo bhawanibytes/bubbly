@@ -9,4 +9,6 @@ cache.on('error', (err) => console.error('Redis Client Error', err));
 
 await cache.connect();
 
+console.log('Cache Connected')
+
 export default cache;

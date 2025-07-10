@@ -11,7 +11,7 @@ export const dbURI = process.env.DATABASE_URL
 if (!process.env.SLAT_ROUNDS) {
     throw new Error ("ROUNDS are not in env")
 }
-export const rounds = parseInt( process.env.SLAT_ROUNDS)
+export const slatRounds = parseInt( process.env.SLAT_ROUNDS)
 
 // JWT_SECRET
 if (!process.env.JWT_SECRET){
