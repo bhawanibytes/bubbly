@@ -66,7 +66,7 @@ export async function signup(
     const [userExists] = await db
       .select()
       .from(users)
-      .where(eq(users.number, number));
+      .where(eq(users.phoneNumber, number));
     if (userExists?.isVerified) {
       return {
         success: false,
@@ -79,8 +79,8 @@ export async function signup(
       // hash pin and save user to db
       const hashedPin = await bcrypt.hash(pin, slatRounds);
       const [insertedUser] = await db.insert(users).values({
-        name,
-        number,
+        name: name,
+        phoneNumber: number,
         pin: hashedPin,
         isVerified: false,
       });
@@ -153,7 +153,7 @@ export async function verifySignup(
     await db
       .update(users)
       .set({ isVerified: true })
-      .where(eq(users.number, number))
+      .where(eq(users.phoneNumber, number))
 
     // return success
     return {
@@ -195,7 +195,7 @@ export async function login(
     const [result] = await db
       .select()
       .from(users)
-      .where(eq(users.number, number));
+      .where(eq(users.phoneNumber, number));
 
     //return if user don't exists 0r is not verified
     if (!result?.isVerified) {
@@ -286,7 +286,7 @@ export async function forgetPin(
     const [userExists] = await db
       .select()
       .from(users)
-      .where(eq(users.number, number));
+      .where(eq(users.phoneNumber, number));
 
     //return if user don't exists or is not verified
     if (!userExists?.isVerified) {
@@ -405,7 +405,7 @@ export async function setPin(
     const [updatedUser] = await db
       .update(users)
       .set({ pin: hashedPin })
-      .where(eq(users.number, number));
+      .where(eq(users.phoneNumber, number));
     // return after pin is updated
     return {
       success: true,
