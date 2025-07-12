@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
     "dbpush": "npx drizzle-kit push"
@@ -14,7 +15,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/bcrypt": "^5.0.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.0.1",
     "drizzle-orm": "^0.44.2",
@@ -23,12 +23,16 @@
     "postgres": "^3.4.7",
     "redis": "^5.6.0",
     "twilio": "^5.7.2",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.52.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.52.0",
+    "winston": "^3.17.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.12",
     "drizzle-kit": "^0.31.4",
+    "prettier": "^3.6.2",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
