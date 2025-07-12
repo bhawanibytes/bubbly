@@ -1,57 +1,34 @@
-import { foreignKey, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { chats } from "./chats.js";
-import { users } from "./users.js";
+import { relations } from "drizzle-orm";
+import { AnyPgColumn, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { chats } from "./chats";
+import { users } from "./users";
 
 export const messages = pgTable("messages", {
   id: uuid("id").defaultRandom().primaryKey(),
-  chatId: uuid("chatId"),
-  senderId: uuid("senderId").references(()=>users.id),
+  chatId: uuid("chat_id").references(()=>chats.id),
+  senderId: uuid("sender_id").references(()=>users.id),
   content: text("content"),
   type: text("type"),
   timestamp: timestamp("timestamp", {withTimezone: true}).defaultNow(),
   status: text("status"),
-  replyTo: uuid("replyTo")
-}, (table) => ({
-  chatFk: foreignKey({
-    columns: [table.chatId],
-    foreignColumns: [chats.id],
+  replyTo: uuid("reply_to").references((): AnyPgColumn => messages.id)
+},
+)
+
+export const messagesRelations = relations(messages, ({ one, many }) => ({
+  chat: one(chats, {
+    fields: [messages.chatId],
+    references: [chats.id],
   }),
-  // Define the self-referencing foreign key in the callback to avoid TS errors
-  replyToFk: foreignKey({
-    name: "messages_reply_to_fk", // Naming constraints is good practice
-    columns: [table.replyTo],
-    foreignColumns: [table.id],
-  }).onDelete('set null'), // If a replied-to message is deleted, just nullify the reference
+  sender: one(users, {
+    fields: [messages.senderId],
+    references: [users.id],
+  }),
+  replyMessage: one(messages, {
+    fields: [messages.replyTo],
+    references: [messages.id],
+  }),
+  chatsWhereLastMessage: many(chats, {
+    relationName: "lastMessage",
+  }),
 }))
-
-
-
-// import { foreignKey, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-// import { chats } from "./chats.js";
-// import { users } from "./users.js";
-
-// // Define enums for type-safe columns
-// export const messageTypeEnum = pgEnum('message_type', ['text', 'image', 'file']);
-// export const messageStatusEnum = pgEnum('message_status', ['sent', 'delivered', 'read']);
-
-// export const messages = pgTable("messages", {
-//   id: uuid().defaultRandom().primaryKey(),
-//   // It's good practice to make foreign keys not-nullable unless they are optional
-//   // and to define onDelete behavior.
-//   chatId: uuid().references(() => chats.id, { onDelete: 'cascade' }).notNull(),
-//   senderId: uuid().references(() => users.id, { onDelete: 'cascade' }).notNull(),
-//   content: text().notNull(),
-//   // Use the enums for type safety
-//   type: messageTypeEnum('type').default('text').notNull(),
-//   timestamp: timestamp({ withTimezone: true }).defaultNow().notNull(),
-//   status: messageStatusEnum('status').default('sent').notNull(),
-//   // This column is nullable since not all messages are replies
-//   replyTo: uuid(),
-// }, (table) => ({
-//   // Define the self-referencing foreign key in the callback to avoid TS errors
-//   replyToFk: foreignKey({
-//     name: "messages_reply_to_fk", // Naming constraints is good practice
-//     columns: [table.replyTo],
-//     foreignColumns: [table.id],
-//   }).onDelete('set null'), // If a replied-to message is deleted, just nullify the reference
-// }));

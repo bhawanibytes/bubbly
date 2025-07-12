@@ -1,6 +1,6 @@
 {
-  "id": "c75cb90d-19de-4839-9549-7b8da1572a25",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "9524c54c-93d9-4719-a8db-128c96169bbf",
+  "prevId": "c75cb90d-19de-4839-9549-7b8da1572a25",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -12,13 +12,13 @@
           "name": "chat_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "role": {
           "name": "role",
@@ -303,13 +303,13 @@
           "name": "message_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "status": {
           "name": "status",
