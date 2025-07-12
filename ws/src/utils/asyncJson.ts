@@ -1,8 +1,8 @@
-import { Result } from "../types/type.res.js";
+import { Result } from "../types/types.res.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
 
 export default function safeAsynceJson<T = any>(
-  handler: (res: UWSRes, req: UWSReq, body: T) => Promise<Result>
+  handler: (res: UWSRes, req: UWSReq, body: T) => Promise<Result>,
 ) {
   return (res: UWSRes, req: UWSReq) => {
     let aborted = false;
@@ -51,7 +51,7 @@ export default function safeAsynceJson<T = any>(
                     success: false,
                     status: "500 Internal Server Error",
                     message: "Internal Server Error",
-                  } as Result)
+                  } as Result),
                 );
               });
             }

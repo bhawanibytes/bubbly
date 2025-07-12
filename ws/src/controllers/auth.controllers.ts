@@ -10,7 +10,7 @@ import {
   secret,
   slatRounds,
 } from "../configs/env.config.js";
-import { Result } from "../types/type.res.js";
+import { Result } from "../types/types.res.js";
 import generateOtp from "../utils/generateOtp.js";
 import sendOtp from "../configs/twilio.config.js";
 import cache from "../configs/redis.config.js";
@@ -49,7 +49,7 @@ interface SetPinBody {
 export async function signup(
   res: UWSRes,
   req: UWSReq,
-  body: SignupBody
+  body: SignupBody,
 ): Promise<Result> {
   const { name, number, pin } = body as SignupBody;
   // return if any details are not provided
@@ -116,7 +116,7 @@ export async function signup(
 export async function verifySignup(
   res: UWSRes,
   req: UWSReq,
-  body: VerifySignupBody
+  body: VerifySignupBody,
 ): Promise<Result> {
   const { number, userOtp } = body;
   // return if all details are not provided
@@ -147,13 +147,13 @@ export async function verifySignup(
         status: "401 Unauthorized",
         message: "Wrong otp.",
         error: null,
-      }
+      };
     }
     // save user as isVerifiedn true
     await db
       .update(users)
       .set({ isVerified: true })
-      .where(eq(users.phoneNumber, number))
+      .where(eq(users.phoneNumber, number));
 
     // return success
     return {
@@ -161,15 +161,15 @@ export async function verifySignup(
       status: "202 Accepted",
       message: "Otp matched.",
       data: null,
-    }
+    };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
       error,
-    }
+    };
   }
 }
 
@@ -177,7 +177,7 @@ export async function verifySignup(
 export async function login(
   res: UWSRes,
   req: UWSReq,
-  body: LoginBody
+  body: LoginBody,
 ): Promise<Result> {
   const { number, pin } = body;
 
@@ -229,7 +229,7 @@ export async function login(
         secret,
         {
           expiresIn: accessExpiry,
-        }
+        },
       );
       const refreshToken = jwt.sign(
         {
@@ -238,7 +238,7 @@ export async function login(
         secret,
         {
           expiresIn: refreshExpiry,
-        }
+        },
       );
       return {
         success: true,
@@ -251,16 +251,16 @@ export async function login(
           accessToken,
           refreshToken,
         },
-      }
+      };
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
       error,
-    }
+    };
   }
 }
 
@@ -268,7 +268,7 @@ export async function login(
 export async function forgetPin(
   res: UWSRes,
   req: UWSReq,
-  body: ForgetPinBody
+  body: ForgetPinBody,
 ): Promise<Result> {
   try {
     const { number } = body;
@@ -279,7 +279,7 @@ export async function forgetPin(
         status: "400 Bad Request",
         message: "All fields required",
         error: null,
-      }
+      };
     }
 
     // retrieve details from db
@@ -295,14 +295,14 @@ export async function forgetPin(
         status: "401 Unauthorized",
         message: "Invalid credentials",
         data: null,
-      }
+      };
     }
     // genearate 6 digit otp
-    const otp = generateOtp()
+    const otp = generateOtp();
     // send otp to the number
-    const otpServiceRes = sendOtp(otp, number)
+    const otpServiceRes = sendOtp(otp, number);
     // save otp to cache
-    const saveOtp = await cache.set(`forgetPin:${number}`, otp)
+    const saveOtp = await cache.set(`forgetPin:${number}`, otp);
     console.log(saveOtp);
     // in end return the response once otp is sent
     return {
@@ -312,7 +312,7 @@ export async function forgetPin(
       data: {
         otpServiceRes,
       },
-    }
+    };
   } catch (error) {
     console.log(error);
     return {
@@ -320,7 +320,7 @@ export async function forgetPin(
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
       error,
-    }
+    };
   }
 }
 
@@ -328,9 +328,9 @@ export async function forgetPin(
 export async function verifyForgetPin(
   res: UWSRes,
   req: UWSReq,
-  body: VerifyForgetPinBody
+  body: VerifyForgetPinBody,
 ): Promise<Result> {
-  const { number, userOtp } = body
+  const { number, userOtp } = body;
   // return if all arg not provided
   if (!number || !userOtp) {
     return {
@@ -338,7 +338,7 @@ export async function verifyForgetPin(
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    }
+    };
   }
   try {
     // return if otp didn't match and cache is not available
@@ -349,7 +349,7 @@ export async function verifyForgetPin(
         status: "403 Forbidden",
         message: "Wrong Otp",
         error: null,
-      }
+      };
     }
     // create a setPin token in cache
     const pinToken = await cache.set(`setPinToken:${number}`, "verified");
@@ -361,7 +361,7 @@ export async function verifyForgetPin(
       data: {
         pinToken,
       },
-    }
+    };
   } catch (error) {
     console.log(error);
     return {
@@ -369,7 +369,7 @@ export async function verifyForgetPin(
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
       error,
-    }
+    };
   }
 }
 
@@ -377,7 +377,7 @@ export async function verifyForgetPin(
 export async function setPin(
   res: UWSRes,
   req: UWSReq,
-  body: SetPinBody
+  body: SetPinBody,
 ): Promise<Result> {
   const { number, userPin } = body;
   if (!number || !userPin) {
@@ -386,7 +386,7 @@ export async function setPin(
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    }
+    };
   }
   try {
     const cacheToken = await cache.get(`setPinToken:${number}`);
@@ -396,7 +396,7 @@ export async function setPin(
         status: "401 Unauthorized",
         message: "Token is expired",
         error: null,
-      }
+      };
     }
     // Delete the token so it can't be reused
     await cache.del(`setPinToken:${number}`);
@@ -414,7 +414,7 @@ export async function setPin(
       data: {
         updatedUser,
       },
-    }
+    };
   } catch (error) {
     console.log(error);
     return {
@@ -422,6 +422,6 @@ export async function setPin(
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
       error,
-    }
+    };
   }
 }

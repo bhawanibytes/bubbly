@@ -1,14 +1,15 @@
-import { createClient } from 'redis';
-import { redisUrl } from './env.config.js';
+import { createClient } from "redis";
+import { redisUrl } from "./env.config.js";
 
 const cache = createClient({
-  url: redisUrl
+  url: redisUrl,
 });
 
-cache.on('error', (err) => console.error('Redis Client Error', err));
+cache.on("error", (err) => console.error("Redis Client Error", err));
 
-await cache.connect();
-
-console.log('Cache Connected')
+(async () => {
+  await cache.connect();
+  console.log("Cache Connected");
+})();
 
 export default cache;
