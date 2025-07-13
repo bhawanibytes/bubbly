@@ -1,19 +1,6 @@
 @import "tailwindcss";
-/* @config "../tailwind.config.ts" */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800');
 
-
-
-:root {
-  --font: "Plus Jakarta Sans", sans-serif;
-}
-
-/* .dark {
-
-} */
-
-@theme {
-  --color-theme-bg: var(--background-color);
-  --color-theme-text: var(--text-color);
-  --font-plus: var(--font);
+body {
+  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
 }
