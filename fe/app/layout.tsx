@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Bubbly",
-  description: "Enjoy Whatsapp & Discord both's at one platform: Bubbly, Made with Love ❤️ in India by Bhawani Singh",
+  description:
+    "Enjoy Whatsapp & Discord both's at one platform: Bubbly, Made with Love ❤️ in India by Bhawani Singh",
 };
 
 export default function RootLayout({
@@ -13,9 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="">
-        {children}
-      </body>
+      <body className="">{children}</body>
     </html>
   );
 }

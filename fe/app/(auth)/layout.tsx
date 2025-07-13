@@ -1,5 +1,9 @@
 export default function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <div className="h-screen w-full bg-gray-600 flex justify-center items-center">{children}</div>;
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-gray-600">
+      {children}
+    </div>
+  );
 }
