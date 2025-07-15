@@ -5,7 +5,7 @@ import KeyFeatures from "@/components/KeyFeatures";
 export default function Home() {
   return (
     <div>
-      <header className="mx-8">
+      <header className="mx-10">
         <Navbar />
       </header>
       <div className="w-full border-t-2 border-[#F2F2F2]"></div>

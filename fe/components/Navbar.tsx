@@ -32,7 +32,7 @@ export default function Navbar() {
             Pricing{" "}
           </Link>
         </ul>
-        <div className="flex gap-2 font-medium">
+        <div className="flex gap-2 font-bold">
           <Link
             href="/signup"
             className="flex h-10 w-[5.375rem] items-center justify-center rounded-3xl bg-black text-sm text-white"
@@ -43,7 +43,7 @@ export default function Navbar() {
             href="/login"
             className="flex h-10 w-[5.375rem] items-center justify-center rounded-3xl bg-[#F2F2F2] text-sm"
           >
-            Login
+            Log in
           </Link>
         </div>
       </nav>
