@@ -11,7 +11,7 @@ export default function HeroSection() {
           className="hero-image flex min-h-[30rem] min-w-[58rem] flex-col justify-end gap-8 rounded-2xl bg-[url('/heroImage.png')] bg-cover bg-center bg-no-repeat px-10 pb-10 text-white"
         >
           <div className="headings flex flex-col gap-2">
-            <h1 className="text-5xl leading-tight font-black">
+            <h1 className="text-5xl leading-tight font-black tracking-[-0.033em]">
               Connect Instantly, Communicate Seamlessly
             </h1>
             <h2 className="text-base font-normal text-[#F2F2F2]">

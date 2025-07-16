@@ -3,4 +3,5 @@
 
 body {
   font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+  box-sizing: border-box;
 }
