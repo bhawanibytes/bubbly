@@ -2,7 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import KeyFeatures from "@/components/KeyFeatures";
 import Testimonials from "@/components/Testimonials";
 import ChatInterface from "@/components/ChatInterface";
-import SignupBT from "@/components/SignupBT";
+import Button from "@/components/Button";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         <KeyFeatures />
         <Testimonials />
         <ChatInterface />
-        <SignupBT />
+        <Button href="/signup" className="mx-4 my-3">Sign Up Now</Button>
       </div>
     </div>
   );

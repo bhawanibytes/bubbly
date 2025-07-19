@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "expose": "bash -c \"ip=$(ipconfig | grep -A 10 'Wireless LAN adapter' | grep 'IPv4' | awk -F: '{print $2}' | tr -d '[:space:]'); echo 'Open in browser: http://'$ip':3000'; HOST=0.0.0.0 npx next dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -21,7 +22,8 @@
     "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
