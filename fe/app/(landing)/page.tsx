@@ -12,7 +12,9 @@ export default function Home() {
         <KeyFeatures />
         <Testimonials />
         <ChatInterface />
-        <Button href="/signup" className="mx-4 my-3">Sign Up Now</Button>
+        <Button href="/signup" className="mx-4 my-3">
+          Sign Up Now
+        </Button>
       </div>
     </div>
   );
