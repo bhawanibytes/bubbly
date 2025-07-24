@@ -16,14 +16,14 @@ import sendOtp from "../configs/twilio.config.js";
 import cache from "../configs/redis.config.js";
 
 interface SignupBody {
-  name: string;
+  fullname: string;
   number: string;
   pin: string;
 }
 
 interface VerifySignupBody {
   number: string;
-  userOtp: string;
+  otp: string;
 }
 
 interface LoginBody {
@@ -51,9 +51,10 @@ export async function signup(
   req: UWSReq,
   body: SignupBody,
 ): Promise<Result> {
-  const { name, number, pin } = body as SignupBody;
+  const { fullname, number, pin } = body as SignupBody;
+  console.log("fullname", fullname, "number", number, "pin", pin);
   // return if any details are not provided
-  if (!name || !number || !pin) {
+  if (!fullname || !number || !pin) {
     return {
       success: false,
       status: "400 Bad Request",
@@ -79,7 +80,7 @@ export async function signup(
       // hash pin and save user to db
       const hashedPin = await bcrypt.hash(pin, slatRounds);
       const [insertedUser] = await db.insert(users).values({
-        name: name,
+        name: fullname,
         phoneNumber: number,
         pin: hashedPin,
         isVerified: false,
@@ -99,6 +100,8 @@ export async function signup(
       message: "You signed up.",
       data: {
         otpServiceRes,
+        fullname,
+        number,
       },
     };
   } catch (error) {
@@ -107,7 +110,6 @@ export async function signup(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }
@@ -118,9 +120,9 @@ export async function verifySignup(
   req: UWSReq,
   body: VerifySignupBody,
 ): Promise<Result> {
-  const { number, userOtp } = body;
+  const { number, otp } = body;
   // return if all details are not provided
-  if (!number || !userOtp) {
+  if (!number || !otp) {
     return {
       success: false,
       status: "400 Bad Request",
@@ -141,15 +143,15 @@ export async function verifySignup(
       };
     }
     // return if otp don't match
-    if (cachedOtp !== userOtp) {
+    if (cachedOtp !== otp) {
       return {
         success: false,
         status: "401 Unauthorized",
-        message: "Wrong otp.",
+        message: "Wrong otp",
         error: null,
       };
     }
-    // save user as isVerifiedn true
+    // save user as isVerified true
     await db
       .update(users)
       .set({ isVerified: true })
@@ -160,7 +162,9 @@ export async function verifySignup(
       success: true,
       status: "202 Accepted",
       message: "Otp matched.",
-      data: null,
+      data: {
+        number,
+      },
     };
   } catch (error) {
     console.log(error);
@@ -168,7 +172,6 @@ export async function verifySignup(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }
@@ -248,6 +251,7 @@ export async function login(
           Authorization: `Bearer ${accessToken}`,
         },
         data: {
+          number,
           accessToken,
           refreshToken,
         },
@@ -259,7 +263,6 @@ export async function login(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }
@@ -300,7 +303,7 @@ export async function forgetPin(
     // genearate 6 digit otp
     const otp = generateOtp();
     // send otp to the number
-    const otpServiceRes = sendOtp(otp, number);
+    const otpServiceRes = await sendOtp(otp, number);
     // save otp to cache
     const saveOtp = await cache.set(`forgetPin:${number}`, otp);
     console.log(saveOtp);
@@ -319,7 +322,6 @@ export async function forgetPin(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }
@@ -352,15 +354,13 @@ export async function verifyForgetPin(
       };
     }
     // create a setPin token in cache
-    const pinToken = await cache.set(`setPinToken:${number}`, "verified");
+    await cache.set(`setPinToken:${number}`, "verified");
     // in end return the response once token is cached
     return {
       success: true,
       status: "202 Accepted",
       message: "Otp matched.",
-      data: {
-        pinToken,
-      },
+      data: null,
     };
   } catch (error) {
     console.log(error);
@@ -368,7 +368,6 @@ export async function verifyForgetPin(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }
@@ -421,7 +420,6 @@ export async function setPin(
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-      error,
     };
   }
 }

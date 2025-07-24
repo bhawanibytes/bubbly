@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
-    "checklint": "npx prettier . --check",
-    "lint": "npx prettier . --write",
+    "format:check": "npx prettier . --check",
+    "format": "npx prettier . --write",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
     "dbpush": "npx drizzle-kit push"
