@@ -58,3 +58,9 @@ if (!process.env.REDIS_URL) {
   throw new Error("REDIS_URL are not in env");
 }
 export const redisUrl = process.env.REDIS_URL;
+
+// FRONTEND_URL
+if (!process.env.FRONTEND_URL) {
+  throw new Error("FRONTEND_URL are not in env");
+}
+export const frontendUrl = process.env.FRONTEND_URL;

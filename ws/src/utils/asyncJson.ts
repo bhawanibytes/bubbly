@@ -1,10 +1,12 @@
 import { Result } from "../types/types.res.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
+import { getCORSHeaders } from "../utils/cors.js";
 
 export default function safeAsynceJson<T = any>(
   handler: (res: UWSRes, req: UWSReq, body: T) => Promise<Result>,
 ) {
   return (res: UWSRes, req: UWSReq) => {
+    const corsHeaders = getCORSHeaders(req);
     let aborted = false;
     let buffer = Buffer.alloc(0);
     res.onAborted(() => {
@@ -21,7 +23,7 @@ export default function safeAsynceJson<T = any>(
         try {
           body = JSON.parse(buffer.toString());
         } catch (error) {
-          res.writeStatus("400 Bad Request").end("Invalid JSON");
+          res.writeStatus("400 Bad Request").end("Invalid JSON from parser");
           return;
         }
         // calls handler with body, IIFE
@@ -31,14 +33,21 @@ export default function safeAsynceJson<T = any>(
             if (aborted || !result) return;
             // write all header and json response in batch
             res.cork(() => {
+              // write status code
+              res.writeStatus(result?.status ?? "200 OK");
               res.writeHeader("Content-Type", "application/json");
+              // write cors headers
+              for (const key in corsHeaders) {
+                res.writeHeader(key, corsHeaders[key]);
+              }
+              // write headers from controllers
               if (result.headers) {
                 for (const key in result.headers) {
                   res.writeHeader(key, result.headers[key]);
                 }
                 delete result.headers;
               }
-              res.writeStatus(result.status);
+              delete result.status;
               res.end(JSON.stringify(result));
             });
           } catch (err) {
