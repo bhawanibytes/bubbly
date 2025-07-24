@@ -1,19 +1,19 @@
+import LoginForm from "@/components/LoginForm";
+import Image from "next/image";
+
 export default function Login() {
   return (
-    <form>
-      <div className="flex flex-col gap-6">
-        <div className="grid gap-2"></div>
-        <div className="grid gap-2">
-          <div className="flex items-center">
-            <a
-              href="#"
-              className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-        </div>
-      </div>
-    </form>
+    <div className="mx-40 my-5 flex min-h-[87dvh] items-center justify-around gap-10">
+      <Image
+        src="/signup.jpg"
+        alt="Descriptive alt"
+        width={0}
+        height={0}
+        sizes="100vw"
+        className="h-[80dvh] w-auto"
+        priority
+      />
+      <LoginForm />
+    </div>
   );
 }

@@ -32,7 +32,7 @@ import { twMerge } from "tailwind-merge";
 import React from "react";
 
 type CommonProps = {
-  className?: string;
+  className?: string | Record<string, string>;
   children?: React.ReactNode;
 };
 
