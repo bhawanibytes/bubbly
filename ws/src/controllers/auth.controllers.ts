@@ -4,12 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { users } from "../db/schema/users.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
-import {
-  accessExpiry,
-  refreshExpiry,
-  secret,
-  slatRounds,
-} from "../configs/env.config.js";
+import { secret, slatRounds } from "../configs/env.config.js";
 import { Result } from "../types/types.res.js";
 import generateOtp from "../utils/generateOtp.js";
 import sendOtp from "../configs/twilio.config.js";
@@ -231,7 +226,7 @@ export async function login(
         },
         secret,
         {
-          expiresIn: accessExpiry,
+          expiresIn: "1D",
         },
       );
       const refreshToken = jwt.sign(
@@ -240,7 +235,7 @@ export async function login(
         },
         secret,
         {
-          expiresIn: refreshExpiry,
+          expiresIn: "7D",
         },
       );
       return {
@@ -248,7 +243,10 @@ export async function login(
         status: "200 OK",
         message: "Logged in successfully",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          "Set-Cookie": [
+            `accessToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${3600 * 24 * 7}`,
+            `refreshToken=${refreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${3600 * 24 * 7}`,
+          ],
         },
         data: {
           number,

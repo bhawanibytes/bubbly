@@ -1,6 +1,7 @@
 import { Result } from "../types/types.res.js";
 import { UWSReq, UWSRes } from "../types/types.uws.js";
 import { getCORSHeaders } from "../utils/cors.js";
+import resHeaders from "./resHeaders.js";
 
 export default function safeAsynceJson<T = any>(
   handler: (res: UWSRes, req: UWSReq, body: T) => Promise<Result>,
@@ -33,21 +34,9 @@ export default function safeAsynceJson<T = any>(
             if (aborted || !result) return;
             // write all header and json response in batch
             res.cork(() => {
-              // write status code
-              res.writeStatus(result?.status ?? "200 OK");
-              res.writeHeader("Content-Type", "application/json");
-              // write cors headers
-              for (const key in corsHeaders) {
-                res.writeHeader(key, corsHeaders[key]);
-              }
-              // write headers from controllers
-              if (result.headers) {
-                for (const key in result.headers) {
-                  res.writeHeader(key, result.headers[key]);
-                }
-                delete result.headers;
-              }
-              delete result.status;
+              // write headers
+              resHeaders(res, result, corsHeaders);
+              // write result
               res.end(JSON.stringify(result));
             });
           } catch (err) {

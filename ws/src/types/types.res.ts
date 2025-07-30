@@ -2,7 +2,7 @@ export interface Result {
   success: boolean;
   status?: StatusCode;
   message: string;
-  headers?: Record<string, string>;
+  headers?: Record<string, string | string[]>;
   data?: null | Record<string, string>;
   error?: null | Record<string, string>;
 }
