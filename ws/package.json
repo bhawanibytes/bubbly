@@ -10,7 +10,8 @@
     "format": "npx prettier . --write",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
-    "dbpush": "npx drizzle-kit push"
+    "dbpush": "npx drizzle-kit push",
+    "studio": "drizzle-kit studio"
   },
   "keywords": [],
   "author": "",
