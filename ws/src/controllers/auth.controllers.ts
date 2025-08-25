@@ -1,14 +1,14 @@
 import { eq } from "drizzle-orm"
 import { db } from "../db/db"
 import { users } from "../db/schema/users"
-import { UWSReq, UWSRes } from "../types/types.uws"
+import { UWSReq, UWSRes } from "../types/type.uws"
 import { secret, slatRounds } from "../configs/env.config"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import cache from "../configs/redis.config"
+import cache from "../configs/cache.config"
 import Response from "../types/type.response"
 import generateOtp from "../utils/generateOtp"
-import sendOtp from "../configs/twilio.config"
+import sendOtp from "../configs/message.config"
 
 interface SignupBody {
   fullname: string

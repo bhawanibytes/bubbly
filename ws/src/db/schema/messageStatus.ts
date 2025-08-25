@@ -1,13 +1,7 @@
-import {
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
-import { messages } from "./messages";
-import { users } from "./users";
-import { relations } from "drizzle-orm";
+import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { messages } from "./messages"
+import { users } from "./users"
+import { relations } from "drizzle-orm"
 
 export const messageStatus = pgTable(
   "messageStatus",
@@ -23,7 +17,7 @@ export const messageStatus = pgTable(
     readAt: timestamp("read_at", { withTimezone: true }),
   },
   (table) => [primaryKey({ columns: [table.messageId, table.userId] })],
-);
+)
 
 export const messageStatusRelations = relations(messageStatus, ({ one }) => ({
   message: one(messages, {
@@ -34,4 +28,4 @@ export const messageStatusRelations = relations(messageStatus, ({ one }) => ({
     fields: [messageStatus.userId],
     references: [users.id],
   }),
-}));
+}))

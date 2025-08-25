@@ -1,4 +1,4 @@
-import { AppType } from "../types/types.uws"
+import { AppType } from "../types/type.uws"
 import { createChat } from "../controllers/chats.controllers"
 import authMiddleware from "../middlewares/auth.middleware"
 import wrapper from "../wrappers/asyncJsonCorsMiddleware.wrapper"

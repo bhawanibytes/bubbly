@@ -1,4 +1,4 @@
-import { UWSReq } from "../types/types.uws"
+import { UWSReq } from "../types/type.uws"
 
 export default function cookieParser(req: UWSReq) {
   const cookieHeader = req.getHeader("cookie") || ""

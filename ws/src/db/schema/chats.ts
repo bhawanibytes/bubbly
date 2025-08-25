@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   AnyPgColumn,
   boolean,
@@ -6,10 +6,10 @@ import {
   text,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { users } from "./users";
-import { messages } from "./messages";
-import { chatMembers } from "./chatMembers";
+} from "drizzle-orm/pg-core"
+import { users } from "./users"
+import { messages } from "./messages"
+import { chatMembers } from "./chatMembers"
 
 export const chats = pgTable("chats", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -26,7 +26,7 @@ export const chats = pgTable("chats", {
     withTimezone: true,
   }),
   lastMessageSender: uuid("last_message_sender").references(() => users.id),
-});
+})
 
 export const chatsRelations = relations(chats, ({ one, many }) => ({
   creator: one(users, { fields: [chats.createdBy], references: [users.id] }),
@@ -40,4 +40,4 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
     fields: [chats.lastMessageSender],
     references: [users.id],
   }),
-}));
+}))

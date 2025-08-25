@@ -1,5 +1,5 @@
 import { secret } from "../configs/env.config"
-import { UWSReq, UWSRes } from "../types/types.uws"
+import { UWSReq, UWSRes } from "../types/type.uws"
 import logger from "../configs/logger.config"
 import cookieParser from "../utils/cookieParser"
 import jwt from "jsonwebtoken"

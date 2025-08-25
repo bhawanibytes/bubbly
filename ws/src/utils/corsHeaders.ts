@@ -1,4 +1,4 @@
-import { UWSReq } from "../types/types.uws"
+import { UWSReq } from "../types/type.uws"
 import { frontendUrl } from "../configs/env.config"
 
 export default function getCorsHeaders(req: UWSReq) {

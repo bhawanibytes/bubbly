@@ -1,13 +1,7 @@
-import { relations } from "drizzle-orm";
-import {
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
-import { chats } from "./chats";
-import { users } from "./users";
+import { relations } from "drizzle-orm"
+import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { chats } from "./chats"
+import { users } from "./users"
 
 export const chatMembers = pgTable(
   "chatMembers",
@@ -22,7 +16,7 @@ export const chatMembers = pgTable(
     joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.chatId, table.userId] })],
-);
+)
 
 export const chatMembersRelations = relations(chatMembers, ({ one }) => ({
   chat: one(chats, {
@@ -33,4 +27,4 @@ export const chatMembersRelations = relations(chatMembers, ({ one }) => ({
     fields: [chatMembers.userId],
     references: [users.id],
   }),
-}));
+}))

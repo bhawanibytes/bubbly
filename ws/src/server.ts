@@ -1,8 +1,8 @@
 import uWS from "uWebSockets.js"
-import { registerAuthRoutes } from "./routes/auth.routes.js"
-import getCORSHeaders from "./utils/corsHeaders.js"
-import registerChatRoutes from "./routes/chat.route.js"
-import logger from "./configs/logger.config.js"
+import { registerAuthRoutes } from "./routes/auth.route"
+import logger from "./configs/logger.config"
+import getCORSHeaders from "./utils/corsHeaders"
+import registerChatRoutes from "./routes/chat.route"
 
 const port = 8080
 const app = uWS.App()

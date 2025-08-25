@@ -1,6 +1,6 @@
 import logger from "../configs/logger.config"
 import Response from "../types/type.response"
-import { UWSReq, UWSRes } from "../types/types.uws"
+import { UWSReq, UWSRes } from "../types/type.uws"
 import getCorsHeaders from "../utils/corsHeaders"
 import resHeaders from "../utils/resHeaders"
 
