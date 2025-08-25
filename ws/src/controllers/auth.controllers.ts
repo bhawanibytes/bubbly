@@ -1,43 +1,43 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { eq } from "drizzle-orm";
-import { db } from "../db/db.js";
-import { users } from "../db/schema/users.js";
-import { UWSReq, UWSRes } from "../types/types.uws.js";
-import { secret, slatRounds } from "../configs/env.config.js";
-import { Result } from "../types/types.res.js";
-import generateOtp from "../utils/generateOtp.js";
-import sendOtp from "../configs/twilio.config.js";
-import cache from "../configs/redis.config.js";
+import { eq } from "drizzle-orm"
+import { db } from "../db/db"
+import { users } from "../db/schema/users"
+import { UWSReq, UWSRes } from "../types/types.uws"
+import { secret, slatRounds } from "../configs/env.config"
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import cache from "../configs/redis.config"
+import Response from "../types/type.response"
+import generateOtp from "../utils/generateOtp"
+import sendOtp from "../configs/twilio.config"
 
 interface SignupBody {
-  fullname: string;
-  number: string;
-  pin: string;
+  fullname: string
+  number: string
+  pin: string
 }
 
 interface VerifySignupBody {
-  number: string;
-  otp: string;
+  number: string
+  otp: string
 }
 
 interface LoginBody {
-  number: string;
-  pin: string;
+  number: string
+  pin: string
 }
 
 interface ForgetPinBody {
-  number: string;
+  number: string
 }
 
 interface VerifyForgetPinBody {
-  number: string;
-  userOtp: string;
+  number: string
+  userOtp: string
 }
 
 interface SetPinBody {
-  number: string;
-  userPin: string;
+  number: string
+  userPin: string
 }
 
 // signups and send otp for verify signup
@@ -45,9 +45,9 @@ export async function signup(
   res: UWSRes,
   req: UWSReq,
   body: SignupBody,
-): Promise<Result> {
-  const { fullname, number, pin } = body as SignupBody;
-  console.log("fullname", fullname, "number", number, "pin", pin);
+): Promise<Response> {
+  const { fullname, number, pin } = body as SignupBody
+  console.log("fullname", fullname, "number", number, "pin", pin)
   // return if any details are not provided
   if (!fullname || !number || !pin) {
     return {
@@ -55,57 +55,57 @@ export async function signup(
       status: "400 Bad Request",
       message: "All fields required",
       data: null,
-    };
+    }
   }
   try {
     // check if user already exists and verified then returns
     const [userExists] = await db
       .select()
       .from(users)
-      .where(eq(users.phoneNumber, number));
+      .where(eq(users.phoneNumber, number))
     if (userExists?.isVerified) {
       return {
         success: false,
         status: "409 Conflict",
         message: "User already exists",
-      };
+      }
     }
     // save user if user is not saved in db
     if (!userExists) {
       // hash pin and save user to db
-      const hashedPin = await bcrypt.hash(pin, slatRounds);
-      const [insertedUser] = await db.insert(users).values({
+      const hashedPin = await bcrypt.hash(pin, slatRounds)
+      const insertedUser = await db.insert(users).values({
         name: fullname,
         phoneNumber: number,
         pin: hashedPin,
         isVerified: false,
-      });
+      })
     }
     // generate otp
-    const otp = generateOtp();
+    const otp = generateOtp()
     //send otp
-    const otpServiceRes = await sendOtp(otp, number);
+    // const otpServiceRes = await sendOtp(otp, number);
     // save otp in cache
-    const otpSave = await cache.set(`signup:${number}`, otp);
-    console.log(otpSave);
+    const otpSave = await cache.set(`signup:${number}`, otp)
+    console.log(otpSave)
     // in end return the response once user is created
     return {
       success: true,
       status: "201 Created",
       message: "You signed up.",
       data: {
-        otpServiceRes,
+        // otpServiceRes,
         fullname,
         number,
       },
-    };
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }
 
@@ -114,8 +114,8 @@ export async function verifySignup(
   res: UWSRes,
   req: UWSReq,
   body: VerifySignupBody,
-): Promise<Result> {
-  const { number, otp } = body;
+): Promise<Response> {
+  const { number, otp } = body
   // return if all details are not provided
   if (!number || !otp) {
     return {
@@ -123,11 +123,11 @@ export async function verifySignup(
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    };
+    }
   }
   try {
-    const cachedOtp = await cache.get(`signup:${number}`);
-    console.log("cachedOtp:", cachedOtp);
+    const cachedOtp = await cache.get(`signup:${number}`)
+    console.log("cachedOtp:", cachedOtp)
     // return if otp isn't in cache
     if (!cachedOtp) {
       return {
@@ -135,7 +135,7 @@ export async function verifySignup(
         status: "404 Not Found",
         message: "Otp is expired.",
         error: null,
-      };
+      }
     }
     // return if otp don't match
     if (cachedOtp !== otp) {
@@ -144,13 +144,13 @@ export async function verifySignup(
         status: "401 Unauthorized",
         message: "Wrong otp",
         error: null,
-      };
+      }
     }
     // save user as isVerified true
     await db
       .update(users)
       .set({ isVerified: true })
-      .where(eq(users.phoneNumber, number));
+      .where(eq(users.phoneNumber, number))
 
     // return success
     return {
@@ -160,14 +160,14 @@ export async function verifySignup(
       data: {
         number,
       },
-    };
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }
 
@@ -176,8 +176,8 @@ export async function login(
   res: UWSRes,
   req: UWSReq,
   body: LoginBody,
-): Promise<Result> {
-  const { number, pin } = body;
+): Promise<Response> {
+  const { number, pin } = body
 
   // return if all details are not provided
   if (!number || !pin) {
@@ -186,14 +186,14 @@ export async function login(
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    };
+    }
   }
   try {
     // retrieve details from db
     const [result] = await db
       .select()
       .from(users)
-      .where(eq(users.phoneNumber, number));
+      .where(eq(users.phoneNumber, number))
 
     //return if user don't exists 0r is not verified
     if (!result?.isVerified) {
@@ -202,11 +202,11 @@ export async function login(
         status: "401 Unauthorized",
         message: "Invalid credentials",
         data: null,
-      };
+      }
     }
 
     //match pin with hashed pin
-    const pinMatch = await bcrypt.compare(pin, result?.pin);
+    const pinMatch = await bcrypt.compare(pin, result?.pin)
 
     // error if pin not matched else return token
     if (!pinMatch) {
@@ -218,7 +218,7 @@ export async function login(
           code: "INVALID_CREDENTIALS",
           details: "The username or password you entered is incorrect.",
         },
-      };
+      }
     } else {
       const accessToken = jwt.sign(
         {
@@ -228,7 +228,7 @@ export async function login(
         {
           expiresIn: "1D",
         },
-      );
+      )
       const refreshToken = jwt.sign(
         {
           id: result.id,
@@ -237,7 +237,7 @@ export async function login(
         {
           expiresIn: "7D",
         },
-      );
+      )
       return {
         success: true,
         status: "200 OK",
@@ -253,15 +253,15 @@ export async function login(
           accessToken,
           refreshToken,
         },
-      };
+      }
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }
 
@@ -270,9 +270,9 @@ export async function forgetPin(
   res: UWSRes,
   req: UWSReq,
   body: ForgetPinBody,
-): Promise<Result> {
+): Promise<Response> {
   try {
-    const { number } = body;
+    const { number } = body
     // return if number are not provided
     if (!number) {
       return {
@@ -280,14 +280,14 @@ export async function forgetPin(
         status: "400 Bad Request",
         message: "All fields required",
         error: null,
-      };
+      }
     }
 
     // retrieve details from db
     const [userExists] = await db
       .select()
       .from(users)
-      .where(eq(users.phoneNumber, number));
+      .where(eq(users.phoneNumber, number))
 
     //return if user don't exists or is not verified
     if (!userExists?.isVerified) {
@@ -296,15 +296,15 @@ export async function forgetPin(
         status: "401 Unauthorized",
         message: "Invalid credentials",
         data: null,
-      };
+      }
     }
     // genearate 6 digit otp
-    const otp = generateOtp();
+    const otp = generateOtp()
     // send otp to the number
-    const otpServiceRes = await sendOtp(otp, number);
+    const otpServiceRes = await sendOtp(otp, number)
     // save otp to cache
-    const saveOtp = await cache.set(`forgetPin:${number}`, otp);
-    console.log(saveOtp);
+    const saveOtp = await cache.set(`forgetPin:${number}`, otp)
+    console.log(saveOtp)
     // in end return the response once otp is sent
     return {
       success: true,
@@ -313,14 +313,14 @@ export async function forgetPin(
       data: {
         otpServiceRes,
       },
-    };
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }
 
@@ -329,8 +329,8 @@ export async function verifyForgetPin(
   res: UWSRes,
   req: UWSReq,
   body: VerifyForgetPinBody,
-): Promise<Result> {
-  const { number, userOtp } = body;
+): Promise<Response> {
+  const { number, userOtp } = body
   // return if all arg not provided
   if (!number || !userOtp) {
     return {
@@ -338,35 +338,35 @@ export async function verifyForgetPin(
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    };
+    }
   }
   try {
     // return if otp didn't match and cache is not available
-    const cachedOtp = await cache.get(`forgetPin:${number}`);
+    const cachedOtp = await cache.get(`forgetPin:${number}`)
     if (cachedOtp !== userOtp) {
       return {
         success: false,
         status: "403 Forbidden",
         message: "Wrong Otp",
         error: null,
-      };
+      }
     }
     // create a setPin token in cache
-    await cache.set(`setPinToken:${number}`, "verified");
+    await cache.set(`setPinToken:${number}`, "verified")
     // in end return the response once token is cached
     return {
       success: true,
       status: "202 Accepted",
       message: "Otp matched.",
       data: null,
-    };
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }
 
@@ -375,34 +375,34 @@ export async function setPin(
   res: UWSRes,
   req: UWSReq,
   body: SetPinBody,
-): Promise<Result> {
-  const { number, userPin } = body;
+): Promise<Response> {
+  const { number, userPin } = body
   if (!number || !userPin) {
     return {
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
       error: null,
-    };
+    }
   }
   try {
-    const cacheToken = await cache.get(`setPinToken:${number}`);
+    const cacheToken = await cache.get(`setPinToken:${number}`)
     if (cacheToken !== "verified") {
       return {
         success: false,
         status: "401 Unauthorized",
         message: "Token is expired",
         error: null,
-      };
+      }
     }
     // Delete the token so it can't be reused
-    await cache.del(`setPinToken:${number}`);
+    await cache.del(`setPinToken:${number}`)
     // update pin after hashing it
-    const hashedPin = await bcrypt.hash(userPin, slatRounds);
+    const hashedPin = await bcrypt.hash(userPin, slatRounds)
     const [updatedUser] = await db
       .update(users)
       .set({ pin: hashedPin })
-      .where(eq(users.phoneNumber, number));
+      .where(eq(users.phoneNumber, number))
     // return after pin is updated
     return {
       success: true,
@@ -411,13 +411,13 @@ export async function setPin(
       data: {
         updatedUser,
       },
-    };
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return {
       success: false,
       status: "500 Internal Server Error",
       message: "Something Went Wrong",
-    };
+    }
   }
 }

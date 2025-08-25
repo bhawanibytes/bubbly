@@ -47,3 +47,9 @@ if (!process.env.FRONTEND_URL) {
   throw new Error("FRONTEND_URL are not in env");
 }
 export const frontendUrl = process.env.FRONTEND_URL;
+
+// NODE_ENV
+if (!process.env.NODE_ENV) {
+  throw new Error("NODE_ENV are not in env");
+}
+export const nodeEnv = process.env.NODE_ENV;

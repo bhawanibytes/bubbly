@@ -1,7 +1,7 @@
 import { UWSReq } from "../types/types.uws"
 import { frontendUrl } from "../configs/env.config"
 
-export default function getCORSHeaders(req: UWSReq) {
+export default function getCorsHeaders(req: UWSReq) {
   const origin = req.getHeader("origin")
   const allowedOrigins = [frontendUrl]
   const headers: Record<string, string> = {

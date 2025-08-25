@@ -1,30 +1,30 @@
-import { Result } from "../types/types.res";
-import { UWSRes } from "../types/types.uws";
+import { UWSRes } from "../types/types.uws"
+import Response from "../types/type.response"
 
 export default function resHeaders(
   res: UWSRes,
-  result: Result,
+  response: Response,
   corsHeaders: Record<string, string>,
 ) {
   // write status code
-  res.writeStatus(result?.status ?? "200 OK");
-  res.writeHeader("Content-Type", "application/json");
+  res.writeStatus(response?.status ?? "200 OK")
+  res.writeHeader("Content-Type", "application/json")
   // write cors headers
   for (const key in corsHeaders) {
-    res.writeHeader(key, corsHeaders[key]);
+    res.writeHeader(key, corsHeaders[key])
   }
   // write headers from controllers
-  if (result.headers) {
-    for (const key in result.headers) {
-      if (Array.isArray(result.headers[key])) {
-        result.headers[key].forEach((v) => {
-          res.writeHeader(key, v);
-        });
+  if (response.headers) {
+    for (const key in response.headers) {
+      if (Array.isArray(response.headers[key])) {
+        response.headers[key].forEach((v) => {
+          res.writeHeader(key, v)
+        })
       } else {
-        res.writeHeader(key, result.headers[key]);
+        res.writeHeader(key, response.headers[key])
       }
     }
-    delete result.headers;
+    delete response.headers
   }
-  delete result.status;
+  delete response.status
 }
