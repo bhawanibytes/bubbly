@@ -1,4 +1,4 @@
-import { UWSRes } from "../types/type.uws.js"
+import { UWSRes } from "@/types/type.uws.js"
 
 export function jsonBody(res: UWSRes) {
   return new Promise((reslove, reject) => {

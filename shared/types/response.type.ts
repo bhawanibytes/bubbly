@@ -1,7 +1,7 @@
-export default interface Result {
+export default interface Response {
   success: boolean
-  status?: StatusCode
   message: string
+  status?: StatusCode
   headers?: Record<string, string | string[]>
   data?: null | Record<string, string>
   error?: null | Record<string, string>

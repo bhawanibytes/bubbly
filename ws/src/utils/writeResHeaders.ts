@@ -1,5 +1,5 @@
-import { UWSRes } from "../types/type.uws"
-import Response from "../types/type.response"
+import { UWSRes } from "@/types/type.uws"
+import Response from "@shared/types/response.type"
 
 export default function resHeaders(
   res: UWSRes,

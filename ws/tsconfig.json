@@ -11,8 +11,18 @@
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+    "noEmit": false,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
+      "@configs/*": ["./src/configs/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@db/*": ["./src/db/*"],
+      "@schema/*": ["./src/db/schema/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@wrappers/*": ["./src/wrappers/*"],
+      "@shared/*": ["../shared/*"],
     }
   },
   "include": ["src/**/*", "**/*.ts"]

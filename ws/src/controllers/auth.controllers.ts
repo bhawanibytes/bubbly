@@ -1,44 +1,22 @@
-import { eq } from "drizzle-orm"
-import { db } from "../db/db"
-import { users } from "../db/schema/users"
-import { UWSReq, UWSRes } from "../types/type.uws"
-import { secret, slatRounds } from "../configs/env.config"
+import { db } from "@db/db"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import cache from "../configs/cache.config"
-import Response from "../types/type.response"
-import generateOtp from "../utils/generateOtp"
-import sendOtp from "../configs/message.config"
-
-interface SignupBody {
-  fullname: string
-  number: string
-  pin: string
-}
-
-interface VerifySignupBody {
-  number: string
-  otp: string
-}
-
-interface LoginBody {
-  number: string
-  pin: string
-}
-
-interface ForgetPinBody {
-  number: string
-}
-
-interface VerifyForgetPinBody {
-  number: string
-  userOtp: string
-}
-
-interface SetPinBody {
-  number: string
-  userPin: string
-}
+import { eq } from "drizzle-orm"
+import { users } from "@schema/users"
+import cache from "@configs/cache.config"
+import generateOtp from "@utils/generateOtp"
+import sendOtp from "@configs/message.config"
+import { UWSReq, UWSRes } from "@/types/type.uws"
+import Response from "@shared/types/response.type"
+import { secret, slatRounds } from "@configs/env.config"
+import {
+  SignupBody,
+  VerifySignupBody,
+  LoginBody,
+  ForgetPinBody,
+  VerifyForgetPinBody,
+  SetPinBody,
+} from "@shared/types/auth.type"
 
 // signups and send otp for verify signup
 export async function signup(

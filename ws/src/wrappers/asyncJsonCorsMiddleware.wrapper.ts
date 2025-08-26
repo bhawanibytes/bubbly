@@ -1,8 +1,8 @@
-import logger from "../configs/logger.config"
-import Response from "../types/type.response"
-import { UWSReq, UWSRes } from "../types/type.uws"
-import getCorsHeaders from "../utils/corsHeaders"
-import resHeaders from "../utils/resHeaders"
+import logger from "@configs/logger.config"
+import Response from "@shared/types/response.type"
+import { UWSReq, UWSRes } from "@/types/type.uws"
+import getCorsHeaders from "@/utils/getCorsHeaders"
+import resHeaders from "@utils/writeResHeaders"
 
 // handle Async calls, Extract Json Body, Handle Cors Headers, Support middleware
 export default function asyncJsonCorsMiddlewareWrapper<T = any>(

@@ -1,21 +1,18 @@
-import { db } from "../db/db"
-import { chats } from "../db/schema/chats"
-import { users } from "../db/schema/users"
+import { db } from "@db/db"
+import { chats } from "@schema/chats"
+import { users } from "@schema/users"
+import logger from "@configs/logger.config"
 import { and, eq, inArray } from "drizzle-orm"
-import { UWSReq, UWSRes } from "../types/type.uws"
-import { chatMembers } from "../db/schema/chatMembers"
-import Response from "../types/type.response"
-import logger from "../configs/logger.config"
-
-interface CreateChatBody {
-  to: string
-}
+import { UWSReq, UWSRes } from "@/types/type.uws"
+import { chatMembers } from "@schema/chatMembers"
+import Response from "@shared/types/response.type"
+import { CreateDmChatBody } from "@shared/types/chat.type"
 
 // create a dm chat
 export async function createChat(
   res: UWSRes,
   req: UWSReq,
-  body: CreateChatBody,
+  body: CreateDmChatBody,
 ): Promise<Response> {
   const from = res.user.number
   logger.info(`user from middleware`, res.user)
