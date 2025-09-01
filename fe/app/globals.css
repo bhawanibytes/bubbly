@@ -26,3 +26,17 @@ body {
   font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
   box-sizing: border-box;
 }
+
+input {
+  outline: none;
+}
+
+/* Your CSS (e.g., global.css or inside <style> tag) */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.custom-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}

@@ -1,27 +1,31 @@
 import { baseQuery } from "@/lib/api";
-import { LoginBody, SignupBody, VerifySignupBody } from "@/types/types.auth";
-import { Result } from "@/types/types.res";
+import Response from "@shared/types/response.type";
 import { createApi } from "@reduxjs/toolkit/query/react";
+import {
+  LoginBody,
+  SignupBody,
+  VerifySignupBody,
+} from "@shared/types/auth.type";
 
 export const api = createApi({
   reducerPath: "api", // optional: name in store
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    register: builder.mutation<Result, SignupBody>({
+    register: builder.mutation<Response, SignupBody>({
       query: (data) => ({
         url: "/signup",
         method: "POST",
         body: data,
       }),
     }),
-    verifyUser: builder.mutation<Result, VerifySignupBody>({
+    verifyUser: builder.mutation<Response, VerifySignupBody>({
       query: (data) => ({
         url: "/verify-signup",
         method: "POST",
         body: data,
       }),
     }),
-    loginUser: builder.mutation<Result, LoginBody>({
+    loginUser: builder.mutation<Response, LoginBody>({
       query: (data) => ({
         url: "/login",
         method: "POST",
