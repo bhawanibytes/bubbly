@@ -4,7 +4,7 @@ import React from "react";
 import DigitsInput from "./DigitsInput";
 import Button from "./Button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { VerifySignupBody } from "@/types/types.auth";
+import { VerifySignupBody } from "@shared/types/auth.type";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { verifyFormData } from "@/features/auth/authSlice";

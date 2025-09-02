@@ -1,6 +1,6 @@
 import { useRegisterMutation } from "@/features/auth/authApi";
 import { signupFormData, otpStatus } from "@/features/auth/authSlice";
-import { SignupBody } from "@/types/types.auth";
+import { SignupBody } from "@shared/types/auth.type";
 import {
   faEye,
   faEyeSlash,

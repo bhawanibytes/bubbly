@@ -4,7 +4,7 @@ import logger from "@configs/logger.config"
 import getCORSHeaders from "@utils/getCorsHeaders"
 import registerChatRoutes from "@routes/chat.route"
 
-const port = 8080
+const port = 3000
 const app = uWS.App()
 
 // handle cors; write cors headers to preflight iteratively
@@ -68,6 +68,6 @@ app.listen(port, (token) => {
     logger.info(`Listening to port ${port}`)
   } else {
     // console.log(`Failed to listen to port ` + port);
-    logger.info(`Failed to listen to port ${port}`)
+    logger.error(`Failed to listen to port ${port}`)
   }
 })

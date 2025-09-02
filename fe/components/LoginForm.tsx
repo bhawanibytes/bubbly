@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import DigitsInput from "./DigitsInput";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "./Button";
-import { LoginBody } from "@/types/types.auth";
+import { LoginBody } from "@shared/types/auth.type";
 import { toast } from "sonner";
 import { useLoginUserMutation } from "@/features/auth/authApi";
 import { useRouter } from "next/navigation";

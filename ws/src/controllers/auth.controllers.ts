@@ -1,5 +1,5 @@
 import { db } from "@db/db"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { eq } from "drizzle-orm"
 import { users } from "@schema/users"
