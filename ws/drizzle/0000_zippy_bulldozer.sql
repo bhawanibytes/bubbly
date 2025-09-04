@@ -1,6 +1,7 @@
+CREATE TYPE "public"."status" AS ENUM('sent', 'delivered', 'read');--> statement-breakpoint
 CREATE TABLE "chatMembers" (
-	"chat_id" uuid,
-	"user_id" uuid,
+	"chat_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
 	"role" text,
 	"joined_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "chatMembers_chat_id_user_id_pk" PRIMARY KEY("chat_id","user_id")
@@ -26,13 +27,13 @@ CREATE TABLE "messages" (
 	"content" text,
 	"type" text,
 	"timestamp" timestamp with time zone DEFAULT now(),
-	"status" text,
+	"status" "status" DEFAULT 'sent' NOT NULL,
 	"reply_to" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "messageStatus" (
-	"message_id" uuid,
-	"user_id" uuid,
+	"message_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
 	"status" text,
 	"delivered_at" timestamp with time zone,
 	"read_at" timestamp with time zone,

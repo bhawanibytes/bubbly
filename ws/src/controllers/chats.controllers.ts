@@ -6,7 +6,8 @@ import { and, eq, inArray } from "drizzle-orm"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import { chatMembers } from "@schema/chatMembers"
 import Response from "@shared/types/response.type"
-import { CreateDmChatBody } from "@shared/types/chat.type"
+import { CreateDmChatBody, SendDmBody } from "@shared/types/chat.type"
+import { messages } from "@/db/schema/messages"
 
 // create a dm chat
 export async function createChat(
@@ -14,11 +15,11 @@ export async function createChat(
   req: UWSReq,
   body: CreateDmChatBody,
 ): Promise<Response> {
-  const from = res.user.number
+  const senderId = res.user.id
   logger.info(`user from middleware`, res.user)
-  const { to } = body
-  //ensure both from and to received correctly
-  if (!from || !to) {
+  const { receiverNumber } = body
+  //ensure both from and receiverNumber received correctly
+  if (!senderId || !receiverNumber) {
     return {
       success: false,
       status: "400 Bad Request",
@@ -27,12 +28,14 @@ export async function createChat(
   }
   try {
     // finds if receiver has an account, else returns
-    const [receiverExists] = await db
+    const [receiver] = await db
       .select()
       .from(users)
-      .where(and(eq(users.phoneNumber, to), eq(users.isVerified, true)))
-    logger.info(`receiverExists:`, receiverExists)
-    if (!receiverExists) {
+      .where(
+        and(eq(users.phoneNumber, receiverNumber), eq(users.isVerified, true)),
+      )
+    logger.info(`receiver:`, receiver)
+    if (!receiver) {
       return {
         success: false,
         status: "404 Not Found",
@@ -48,13 +51,13 @@ export async function createChat(
       .where(
         and(
           eq(chats.isGroup, false),
-          eq(chatMembers.userId, res.user.id),
+          eq(chatMembers.userId, senderId),
           inArray(
             chatMembers.chatId,
             db
               .select({ chatId: chatMembers.chatId })
               .from(chatMembers)
-              .where(eq(chatMembers.userId, receiverExists.id)),
+              .where(eq(chatMembers.userId, receiver.id)),
           ),
         ),
       )
@@ -73,17 +76,17 @@ export async function createChat(
         .insert(chats)
         .values({
           isGroup: false,
-          createdBy: res.user.id,
+          createdBy: senderId,
         })
         .returning()
       await tx.insert(chatMembers).values([
         {
           chatId: chatCreated.id,
-          userId: res.user.id,
+          userId: senderId,
         },
         {
           chatId: chatCreated.id,
-          userId: receiverExists.id,
+          userId: receiver.id,
         },
       ])
       return chatCreated
@@ -98,6 +101,88 @@ export async function createChat(
       }
     }
     throw new Error("Unexpected code path")
+  } catch (error) {
+    logger.error(`handler crashed with the error:`, error)
+    return {
+      success: false,
+      status: "500 Internal Server Error",
+      message: "Something Went Wrong",
+    }
+  }
+}
+
+// send a dm message
+export async function sendDm(
+  res: UWSRes,
+  req: UWSReq,
+  body: SendDmBody,
+): Promise<Response> {
+  const senderId = res.user.id
+  logger.info(`user from middleware in sendDm controller`, res.user)
+  const { chatId, messageContent, receiverNumber, messegeType, replyedTo } =
+    body
+
+  //ensure senderId, chatId, receiverNumber, message received correctly
+  if (!senderId || !chatId || !receiverNumber || !messageContent) {
+    return {
+      success: false,
+      status: "400 Bad Request",
+      message: "All arg required",
+    }
+  }
+
+  try {
+    // finds if receiver has an account, else returns
+    const [receiver] = await db
+      .select()
+      .from(users)
+      .where(
+        and(eq(users.phoneNumber, receiverNumber), eq(users.isVerified, true)),
+      )
+    logger.info(`receiver from sendDm controller:`, receiver)
+    if (!receiver) {
+      return {
+        success: false,
+        status: "404 Not Found",
+        message: "User not found",
+      }
+    }
+
+    // is this sender part of this chat? if yes, send message if not return
+    const senderMembership = await db
+      .select()
+      .from(chatMembers)
+      .where(
+        and(eq(chatMembers.chatId, chatId), eq(chatMembers.userId, senderId)),
+      )
+    logger.info(
+      `Sender's membership from sendDm controller: ${senderMembership}`,
+      senderMembership,
+    )
+    if (!senderMembership) {
+      return {
+        success: false,
+        status: "400 Bad Request",
+        message: "Dont do this, you will be caught.",
+      }
+    }
+    const [isMessageSaved] = await db
+      .insert(messages)
+      .values({
+        chatId: chatId,
+        senderId: senderId,
+        content: messageContent,
+        messageType: messegeType,
+        replyTo: replyedTo,
+      })
+      .returning()
+
+    return {
+      success: true,
+      status: "201 Created",
+      message: "Message saved",
+      data: isMessageSaved,
+    }
   } catch (error) {
     logger.error(`handler crashed with the error:`, error)
     return {

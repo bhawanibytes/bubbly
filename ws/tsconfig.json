@@ -22,7 +22,7 @@
       "@routes/*": ["./src/routes/*"],
       "@utils/*": ["./src/utils/*"],
       "@wrappers/*": ["./src/wrappers/*"],
-      "@shared/*": ["../shared/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": ["src/**/*", "**/*.ts"]

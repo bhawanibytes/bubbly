@@ -32,7 +32,6 @@ export async function signup(
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
-      data: null,
     }
   }
   try {
@@ -100,7 +99,6 @@ export async function verifySignup(
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
-      error: null,
     }
   }
   try {
@@ -112,7 +110,6 @@ export async function verifySignup(
         success: false,
         status: "404 Not Found",
         message: "Otp is expired.",
-        error: null,
       }
     }
     // return if otp don't match
@@ -121,7 +118,6 @@ export async function verifySignup(
         success: false,
         status: "401 Unauthorized",
         message: "Wrong otp",
-        error: null,
       }
     }
     // save user as isVerified true
@@ -163,28 +159,26 @@ export async function login(
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
-      error: null,
     }
   }
   try {
     // retrieve details from db
-    const [result] = await db
+    const [user] = await db
       .select()
       .from(users)
       .where(eq(users.phoneNumber, number))
 
-    //return if user don't exists 0r is not verified
-    if (!result?.isVerified) {
+    //return if user don't exists or is not verified
+    if (!user?.isVerified) {
       return {
         success: false,
         status: "401 Unauthorized",
         message: "Invalid credentials",
-        data: null,
       }
     }
 
     //match pin with hashed pin
-    const pinMatch = await bcrypt.compare(pin, result?.pin)
+    const pinMatch = await bcrypt.compare(pin, user?.pin)
 
     // error if pin not matched else return token
     if (!pinMatch) {
@@ -200,7 +194,7 @@ export async function login(
     } else {
       const accessToken = jwt.sign(
         {
-          id: result.id,
+          id: user.id,
         },
         secret,
         {
@@ -209,7 +203,7 @@ export async function login(
       )
       const refreshToken = jwt.sign(
         {
-          id: result.id,
+          id: user.id,
         },
         secret,
         {
@@ -257,7 +251,6 @@ export async function forgetPin(
         success: false,
         status: "400 Bad Request",
         message: "All fields required",
-        error: null,
       }
     }
 
@@ -273,7 +266,6 @@ export async function forgetPin(
         success: false,
         status: "401 Unauthorized",
         message: "Invalid credentials",
-        data: null,
       }
     }
     // genearate 6 digit otp
@@ -315,7 +307,6 @@ export async function verifyForgetPin(
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
-      error: null,
     }
   }
   try {
@@ -326,7 +317,6 @@ export async function verifyForgetPin(
         success: false,
         status: "403 Forbidden",
         message: "Wrong Otp",
-        error: null,
       }
     }
     // create a setPin token in cache
@@ -336,7 +326,6 @@ export async function verifyForgetPin(
       success: true,
       status: "202 Accepted",
       message: "Otp matched.",
-      data: null,
     }
   } catch (error) {
     console.log(error)
@@ -360,7 +349,6 @@ export async function setPin(
       success: false,
       status: "400 Bad Request",
       message: "All fields required",
-      error: null,
     }
   }
   try {
@@ -370,7 +358,6 @@ export async function setPin(
         success: false,
         status: "401 Unauthorized",
         message: "Token is expired",
-        error: null,
       }
     }
     // Delete the token so it can't be reused
