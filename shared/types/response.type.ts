@@ -3,8 +3,8 @@ export default interface Response {
   message: string
   status?: StatusCode
   headers?: Record<string, string | string[]>
-  data?: null | Record<string, string>
-  error?: null | Record<string, string>
+  data?:  Record<string, string | Date | null>
+  error?: Record<string, string>
 }
 
 type StatusCode =
