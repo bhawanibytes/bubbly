@@ -16,3 +16,7 @@ export interface SendDmBody {
   replyedTo: null | string;
   attachement: string;
 }
+
+export interface leaveGroupBody {
+  chatId: string
+}

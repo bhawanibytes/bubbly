@@ -2,15 +2,29 @@ import { db } from "@db/db"
 import { chats } from "@schema/chats"
 import { users } from "@schema/users"
 import logger from "@configs/logger.config"
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, sql } from "drizzle-orm"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import { chatMembers } from "@schema/chatMembers"
 import Response from "@shared/types/response.type"
-import { CreateDmChatBody, SendDmBody } from "@shared/types/chat.type"
+import {
+  CreateDmChatBody,
+  leaveGroupBody,
+  SendDmBody,
+} from "@shared/types/chat.type"
 import { messages } from "@/db/schema/messages"
 
+// createChat (1-to-1 or group)
+
+// getChatsForUser (all conversations with latest message preview)
+
+// getChatDetails (members, metadata, pinned msgs)
+
+// leaveChat (exit group)
+
+// deleteChat (remove conversation for self/archive)
+
 // create a dm chat
-export async function createChat(
+export async function createDmChat(
   res: UWSRes,
   req: UWSReq,
   body: CreateDmChatBody,
@@ -182,6 +196,72 @@ export async function sendDm(
       status: "201 Created",
       message: "Message saved",
       data: isMessageSaved,
+    }
+  } catch (error) {
+    logger.error(`handler crashed with the error:`, error)
+    return {
+      success: false,
+      status: "500 Internal Server Error",
+      message: "Something Went Wrong",
+    }
+  }
+}
+
+// leave a group
+export async function leaveGroup(
+  res: UWSRes,
+  req: UWSReq,
+  body: leaveGroupBody,
+): Promise<Response> {
+  const userId = res.user.id
+  const { chatId } = body
+  // return if any of chatId , userId not provided
+  if (!userId || !chatId) {
+    return {
+      success: false,
+      status: "400 Bad Request",
+      message: "All arg required",
+    }
+  }
+  try {
+    // check if user is member of that chat, if yes retrieved the Id from chatMember, if not
+    const [userGroupMembership] = await db
+      .select({ membershipId: chatMembers.chatId })
+      .from(chatMembers)
+      .innerJoin(chats, eq(chatMembers.chatId, chats.id))
+      .where(
+        and(
+          eq(chats.isGroup, true),
+          eq(chatMembers.chatId, chatId),
+          eq(chatMembers.userId, userId),
+        ),
+      )
+      .limit(1)
+    if (!userGroupMembership) {
+      return {
+        success: false,
+        status: "400 Bad Request",
+        message: "Don't this you will be caught",
+      }
+    }
+    const [userLeftGroup] = await db
+      .delete(chatMembers)
+      .where(
+        and(
+          eq(chatMembers.chatId, userGroupMembership.membershipId),
+          eq(chatMembers.userId, userId),
+        ),
+      )
+      .returning({
+        deletedId: chatMembers.chatId,
+        deletedUser: chatMembers.userId,
+      })
+
+    return {
+      success: true,
+      status: "202 Accepted",
+      message: "You left the group",
+      data: userLeftGroup,
     }
   } catch (error) {
     logger.error(`handler crashed with the error:`, error)

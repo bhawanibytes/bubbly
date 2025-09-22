@@ -17,6 +17,10 @@ import {
   VerifyForgetPinBody,
   SetPinBody,
 } from "@shared/types/auth.type"
+import logger from "@/configs/logger.config"
+
+//  logout (invalidate tokens, clear sessions)
+//  refreshToken (issue new JWTs securely)
 
 // signups and send otp for verify signup
 export async function signup(
@@ -25,7 +29,7 @@ export async function signup(
   body: SignupBody,
 ): Promise<Response> {
   const { fullname, number, pin } = body as SignupBody
-  console.log("fullname", fullname, "number", number, "pin", pin)
+  logger.info("fullname", fullname, "number", number, "pin", pin)
   // return if any details are not provided
   if (!fullname || !number || !pin) {
     return {
@@ -64,7 +68,7 @@ export async function signup(
     // const otpServiceRes = await sendOtp(otp, number);
     // save otp in cache
     const otpSave = await cache.set(`signup:${number}`, otp)
-    console.log(otpSave)
+    logger.info(otpSave)
     // in end return the response once user is created
     return {
       success: true,
@@ -77,7 +81,7 @@ export async function signup(
       },
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
@@ -103,7 +107,7 @@ export async function verifySignup(
   }
   try {
     const cachedOtp = await cache.get(`signup:${number}`)
-    console.log("cachedOtp:", cachedOtp)
+    logger.info("cachedOtp:", cachedOtp)
     // return if otp isn't in cache
     if (!cachedOtp) {
       return {
@@ -136,7 +140,7 @@ export async function verifySignup(
       },
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
@@ -228,7 +232,7 @@ export async function login(
       }
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
@@ -274,7 +278,7 @@ export async function forgetPin(
     const otpServiceRes = await sendOtp(otp, number)
     // save otp to cache
     const saveOtp = await cache.set(`forgetPin:${number}`, otp)
-    console.log(saveOtp)
+    logger.info(saveOtp)
     // in end return the response once otp is sent
     return {
       success: true,
@@ -285,7 +289,7 @@ export async function forgetPin(
       },
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
@@ -328,7 +332,7 @@ export async function verifyForgetPin(
       message: "Otp matched.",
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
@@ -378,7 +382,7 @@ export async function setPin(
       },
     }
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     return {
       success: false,
       status: "500 Internal Server Error",
