@@ -12,7 +12,8 @@
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
     "dbpush": "npx drizzle-kit push",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "seed": "tsx seed.ts"
   },
   "keywords": [],
   "author": "",

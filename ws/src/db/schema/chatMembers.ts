@@ -12,18 +12,20 @@ export const chatMembers = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
-    role: text("role"),
-    joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow(),
+    role: text("role").notNull(),
+    joinedAt: timestamp("joined_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [primaryKey({ columns: [table.chatId, table.userId] })],
 )
 
 export const chatMembersRelations = relations(chatMembers, ({ one }) => ({
-  chat: one(chats, {
+  chatToWhichThisMembershipBelongTo: one(chats, {
     fields: [chatMembers.chatId],
     references: [chats.id],
   }),
-  user: one(users, {
+  userToWhichThisMembershipBelongTo: one(users, {
     fields: [chatMembers.userId],
     references: [users.id],
   }),

@@ -1,8 +1,19 @@
-import { pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import {
+  pgEnum,
+  pgTable,
+  primaryKey,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core"
 import { messages } from "./messages"
 import { users } from "./users"
 import { relations } from "drizzle-orm"
 
+export const messageStatusPerPersonEnum = pgEnum("message_status_per_person", [
+  "not-delivered",
+  "delivered",
+  "read",
+])
 export const messageStatus = pgTable(
   "messageStatus",
   {
@@ -12,7 +23,9 @@ export const messageStatus = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
-    status: text("status"),
+    status: messageStatusPerPersonEnum("status")
+      .default("not-delivered")
+      .notNull(),
     deliveredAt: timestamp("delivered_at", { withTimezone: true }),
     readAt: timestamp("read_at", { withTimezone: true }),
   },
@@ -20,11 +33,11 @@ export const messageStatus = pgTable(
 )
 
 export const messageStatusRelations = relations(messageStatus, ({ one }) => ({
-  message: one(messages, {
+  thisMessageStatusBelongsToWhichMessage: one(messages, {
     fields: [messageStatus.messageId],
     references: [messages.id],
   }),
-  user: one(users, {
+  thisMessageStatusBelongsToWhichUser: one(users, {
     fields: [messageStatus.userId],
     references: [users.id],
   }),

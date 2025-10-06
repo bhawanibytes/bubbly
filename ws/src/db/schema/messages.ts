@@ -9,8 +9,8 @@ import {
 } from "drizzle-orm/pg-core"
 import { chats } from "./chats"
 import { users } from "./users"
+import { messageStatus } from "./messageStatus"
 
-export const statusEnum = pgEnum("status", ["sent", "delivered", "read"])
 export const messageTypeEnum = pgEnum("message_type", [
   "text",
   "image",
@@ -28,27 +28,28 @@ export const messages = pgTable("messages", {
     .references(() => users.id),
   content: text("content").notNull(),
   messageType: messageTypeEnum("message_type").notNull(),
-  timestamp: timestamp("timestamp", { withTimezone: true })
+  createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
-  status: statusEnum("status").notNull().default("sent"),
   replyTo: uuid("reply_to").references((): AnyPgColumn => messages.id),
 })
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
-  chat: one(chats, {
+  chatToWhichThisMessageBelongsTo: one(chats, {
     fields: [messages.chatId],
     references: [chats.id],
+    relationName: "messageOfChat",
   }),
-  sender: one(users, {
+  senderOfThisMessage: one(users, {
     fields: [messages.senderId],
     references: [users.id],
   }),
-  replyMessage: one(messages, {
+  replyedToWhichMessage: one(messages, {
     fields: [messages.replyTo],
     references: [messages.id],
   }),
-  chatsWhereLastMessage: many(chats, {
+  thisMessageIsLastMessageInWhichChat: many(chats, {
     relationName: "lastMessage",
   }),
+  messageStatusesOfThisMessageToDifferentUsers: many(messageStatus),
 }))

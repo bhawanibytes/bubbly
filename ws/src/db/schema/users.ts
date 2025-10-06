@@ -17,8 +17,13 @@ export const users = pgTable("users", {
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
-  createdChats: many(chats), // chats.createdBy
-  chatMembers: many(chatMembers),
-  messages: many(messages),
-  messageStatuses: many(messageStatus),
+  chatInitatedByUser: many(chats, {
+    relationName: "chatsOfUser",
+  }),
+  lastMessageSentInChats: many(chats, {
+    relationName: "chatsInUserIsTheOneWhoSentLastMessage",
+  }),
+  allChatMembershipOfUser: many(chatMembers),
+  allMessagesOfUser: many(messages),
+  messageStatusesOfUser: many(messageStatus), // ✅ Plural for many relation
 }))
