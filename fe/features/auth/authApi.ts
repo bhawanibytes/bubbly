@@ -1,4 +1,4 @@
-import { baseQuery } from "@/lib/api";
+import { baseQuery } from "@baseApi";
 import Response from "@shared/types/response.type";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import {
@@ -7,8 +7,8 @@ import {
   VerifySignupBody,
 } from "@shared/types/auth.type";
 
-export const api = createApi({
-  reducerPath: "api", // optional: name in store
+export const authApi = createApi({
+  reducerPath: "authApi", // optional: name in store
   baseQuery: baseQuery,
   endpoints: (builder) => ({
     register: builder.mutation<Response, SignupBody>({
@@ -39,4 +39,4 @@ export const {
   useRegisterMutation,
   useVerifyUserMutation,
   useLoginUserMutation,
-} = api;
+} = authApi;
