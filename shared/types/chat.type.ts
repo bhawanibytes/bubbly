@@ -12,7 +12,7 @@ export interface SendDmBody {
   chatId: string;
   receiverNumber: string;
   messageContent: string;
-  messegeType: MessageEnum;
+  messageType: MessageEnum;
   replyedTo: null | string;
   attachement: string;
 }
