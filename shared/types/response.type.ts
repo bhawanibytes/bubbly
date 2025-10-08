@@ -1,10 +1,10 @@
 export default interface Response {
-  success: boolean
-  message: string
-  status?: StatusCode
-  headers?: Record<string, string | string[]>
-  data?:  Record<string, string | Date | null>
-  error?: Record<string, string>
+  success: boolean;
+  message: string;
+  status?: StatusCode;
+  headers?: Record<string, string | string[]>;
+  data?: any;
+  error?: Record<string, string>;
 }
 
 type StatusCode =
@@ -69,4 +69,4 @@ type StatusCode =
   | "507 Insufficient Storage"
   | "508 Loop Detected"
   | "510 Not Extended"
-  | "511 Network Authentication Required"
+  | "511 Network Authentication Required";
