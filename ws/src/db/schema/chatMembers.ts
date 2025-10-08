@@ -12,7 +12,7 @@ export const chatMembers = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
-    role: text("role").notNull(),
+    role: text("role").notNull().default("member"),
     joinedAt: timestamp("joined_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
