@@ -21,7 +21,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../shared/*"],
+      "@features/*": ["./features/*"],
+      "@components/*": ["./components/*"],
+      "@baseApi": ["./lib/api"]
     }
   },
   "include": [
