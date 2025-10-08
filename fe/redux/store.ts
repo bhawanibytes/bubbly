@@ -1,15 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "@/features/auth/authSlice";
-import { api } from "@/features/auth/authApi";
-
+import authReducer from "@features/auth/authSlice";
+import { authApi } from "@features/auth/authApi";
+import { dashboardApi } from "@features/dashboard/dashboardApi";
+import dashboardReducer from "@features/dashboard/dashboardSlice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
       auth: authReducer,
-      [api.reducerPath]: api.reducer,
+      [authApi.reducerPath]: authApi.reducer,
+      dashboard: dashboardReducer,
+      [dashboardApi.reducerPath]: dashboardApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(api.middleware),
+      getDefaultMiddleware()
+        .concat(authApi.middleware)
+        .concat(dashboardApi.middleware),
   });
 };
 
