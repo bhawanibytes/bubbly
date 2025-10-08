@@ -15,25 +15,36 @@ import { LoginBody } from "@shared/types/auth.type";
 import { toast } from "sonner";
 import { useLoginUserMutation } from "@/features/auth/authApi";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { userDetailsFromBE } from "@/features/auth/authSlice";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [pinVisible, setPinVisible] = useState(false);
   const { register, handleSubmit } = useForm<LoginBody>();
   const onSubmit: SubmitHandler<LoginBody> = async (data, e) => {
     e?.preventDefault();
+    data.number = "+91" + data.number;
     try {
       toast.promise(loginUser(data).unwrap(), {
         loading: "Logging in...",
         success: (result) => {
           if (result.success) {
+            localStorage.setItem("userId", result.data.userId);
+            dispatch(
+              userDetailsFromBE({
+                number: result.data.number,
+                userId: result.data.userId,
+              })
+            );
+            console.log(`loginPage: ${result.data.userId}`);
             setTimeout(() => {
               router.push("/dashboard");
-            }, 3000);
+            }, 1000);
             return {
-              // @ts-expect-error number will be received
-              message: `You have logged in with +91 ${result.data.number}`,
+              message: `You have logged in with ${result.data.number}`,
               description: "Redirecting to Dashboard ...",
             };
           }
