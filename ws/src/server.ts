@@ -3,8 +3,9 @@ import { registerAuthRoutes } from "@routes/auth.route"
 import logger from "@configs/logger.config"
 import getCORSHeaders from "@utils/getCorsHeaders"
 import registerChatRoutes from "@routes/chat.route"
+import registerMessageRoutes from "./routes/message.route"
 
-const port = 3000
+const port = 4000
 const app = uWS.App()
 
 // handle cors; write cors headers to preflight iteratively
@@ -47,6 +48,7 @@ app.ws("/*", {
 // register all routes
 registerAuthRoutes(app)
 registerChatRoutes(app)
+registerMessageRoutes(app)
 
 //
 app.post("/test", (res, req) => {
