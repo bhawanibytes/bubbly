@@ -225,7 +225,8 @@ export async function login(
           ],
         },
         data: {
-          number,
+          number: user.phoneNumber,
+          userId: user.id,
           accessToken,
           refreshToken,
         },
