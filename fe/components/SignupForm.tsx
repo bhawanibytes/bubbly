@@ -23,6 +23,7 @@ const SignupForm = () => {
   const [registerUser, { isLoading }] = useRegisterMutation();
   const onSubmit: SubmitHandler<SignupBody> = async (data, e) => {
     e?.preventDefault();
+    data.number = "+91" + data.number;
     dispatch(signupFormData(data));
     try {
       toast.promise(registerUser(data).unwrap(), {
@@ -31,8 +32,7 @@ const SignupForm = () => {
           if (result.success) {
             dispatch(otpStatus({ otpStatus: true }));
             return {
-              // @ts-expect-error number will be received
-              message: `OTP is sent to +91${result.data.number}`,
+              message: `OTP is sent to ${result.data.number}`,
               description: "Verify with otp...",
             };
           }
@@ -63,7 +63,11 @@ const SignupForm = () => {
       </div>
       <div className="mt-6 flex h-10 w-full items-center gap-2 rounded-xl border-[0.1rem] border-[#e6e6e6] p-2">
         <FontAwesomeIcon icon={faPhone} className="max-h-4 max-w-4" />
-        +91
+        <select name="flags" id="flags">
+          {}
+          <option value=""></option>
+        </select>
+        <div>+91</div>
         <DigitsInput
           placeholder="9876543210"
           pattern="[0-9]{10}"
