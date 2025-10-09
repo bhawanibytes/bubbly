@@ -1,7 +1,7 @@
 import { db } from "@/db/db"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import { fetchMesssagesBody } from "@shared/types/messages.type"
-import { eq, inArray } from "drizzle-orm"
+import { eq, inArray, ne } from "drizzle-orm"
 import Response from "@shared/types/response.type"
 import { chats } from "@/db/schema/chats"
 import { users } from "@/db/schema/users"
@@ -15,6 +15,7 @@ export async function fetchAllChatsAndMessages(
   req: UWSReq,
 ): Promise<Response> {
   const userId: string = res.user.id
+  const userNumber: string = res.user.number
   const allChats = await db.query.chatMembers.findMany({
     where: eq(chatMembers.userId, userId),
     columns: {
@@ -27,7 +28,25 @@ export async function fetchAllChatsAndMessages(
     where: inArray(chats.id, arrOfChat),
     with: {
       allMessagesOfThisChat: {
+        // columns: {}
+        with: {
+          senderOfThisMessage: {
+            columns: {
+              phoneNumber: true,
+            },
+          },
+        },
         orderBy: (messages, { asc }) => [asc(messages.createdAt)],
+      },
+      membersOfThisChat: {
+        where: ne(chatMembers.userId, userId),
+        with: {
+          userToWhichThisMembershipBelongTo: {
+            columns: {
+              phoneNumber: true,
+            },
+          },
+        },
       },
     },
     orderBy: (chats, { desc }) => [desc(chats.lastMessageTimestamp)],
@@ -36,7 +55,7 @@ export async function fetchAllChatsAndMessages(
     success: true,
     status: "200 OK",
     message: "Here is your all messages of this chat",
-    data: { userId, messageRecords },
+    data: { userId, userNumber, messageRecords },
   }
 }
 
