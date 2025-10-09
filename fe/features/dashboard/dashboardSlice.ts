@@ -4,12 +4,10 @@ import { fetchAllChatsAndMessagesResponse } from "@shared/types/messages.type";
 interface DashboardState {
   dashboardState: fetchAllChatsAndMessagesResponse[] | [];
   selectedChat: string;
-  userId: string | null;
 }
 const initialState: DashboardState = {
   dashboardState: [],
-  selectedChat: "",
-  userId: null,
+  selectedChat: "",  
 };
 
 export const dashboardSlice = createSlice({

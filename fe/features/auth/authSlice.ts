@@ -5,7 +5,7 @@ interface InitialState {
   pin: number | null;
   otpStatus: boolean;
   otp: number | null;
-  userId: string;
+  // userId: string;
 }
 const initialState: InitialState = {
   fullname: "",
@@ -13,7 +13,6 @@ const initialState: InitialState = {
   pin: null,
   otpStatus: false,
   otp: null,
-  userId: "",
 };
 export const authSlice = createSlice({
   name: "auth",
@@ -31,16 +30,9 @@ export const authSlice = createSlice({
     otpStatus: (state, action) => {
       state.otpStatus = action.payload.otpStatus;
     },
-    userDetailsFromBE: (state, action) => {
-      const { number, userId } = action.payload;
-      state.number = number;
-      state.userId = userId;
-      console.log(`number and userID from reducer ${number} : ${userId}`);
-    },
   },
 });
 
-export const { signupFormData, verifyFormData, otpStatus, userDetailsFromBE } =
-  authSlice.actions;
+export const { signupFormData, verifyFormData, otpStatus } = authSlice.actions;
 
 export default authSlice.reducer;
