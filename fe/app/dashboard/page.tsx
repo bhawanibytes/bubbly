@@ -16,6 +16,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (data) {
       dispatch(firstLoad({ dashboardState: data.data.messageRecords }));
+      localStorage.setItem("userNumber", data.data.userNumber);
     }
   }, [data, dispatch]);
   const dashboardState = useSelector(
@@ -24,9 +25,9 @@ export default function Dashboard() {
   const selectedChat = useSelector(
     (state: RootState) => state.dashboard.selectedChat
   );
-  const userId = useSelector((state: RootState) => state.auth.userId);
-  console.log(`userPage: ${userId}`);
-  if (userId != "") console.log(`userPage with check: ${userId}`);
+  // const userId = useSelector((state: RootState) => state.auth.userId);
+  // console.log(`userPage: ${userId}`);
+  // if (userId != "") console.log(`userPage with check: ${userId}`);
   // Use useMemo to memoize and add debugging
   const selectedChatMessage = useMemo(() => {
     console.log("🔍 Selected Chat ID:", selectedChat);
@@ -50,9 +51,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center text-gray-500">
+    <div className="flex h-screen items-center justify-center text-black">
       {/* left chats */}
-      <div className="custom-scrollbar flex h-full w-[20%] flex-col gap-2 overflow-y-scroll scroll-smooth bg-white px-2">
+      <div className="flex h-full w-[20%] flex-col gap-2 bg-amber-400 px-2">
         <div className="px-2 text-lg">Chats</div>
         {/* Debug info */}
         <div className="bg-gray-100 p-2 text-xs">
@@ -61,29 +62,30 @@ export default function Dashboard() {
         </div>
         {dashboardState.map((chatObj) => (
           <ChatTiles
-            chatId={chatObj?.id}
+            chatDisplayName={`${chatObj.isGroup ? chatObj.groupName : chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber}`}
             lastMessage={chatObj.allMessagesOfThisChat[0].content}
             key={chatObj?.id}
+            chatId={chatObj.id}
           />
         ))}
       </div>
       <div className="h-full w-1 bg-amber-200"></div>
       {/* Chat Window */}
-      <div className="custom-scrollbar relative flex min-h-full w-[80%] flex-col-reverse gap-2 overflow-y-scroll scroll-smooth bg-gray-300">
-        <div className="flex h-12 max-h-28 w-full items-center bg-white py-10">
+      <div className="custom-scrollbar relative flex h-full w-[80%] flex-col-reverse overflow-y-scroll scroll-smooth bg-gray-300">
+        <div className="flex h-12 max-h-28 w-full items-center bg-gray-400 py-10">
           <textarea
-            className="w-[calc(100%-320px)] resize-none overflow-y-scroll rounded-2xl px-4 focus:outline-none"
+            className="flex max-h-24 w-[calc(100%-320px)] resize-none items-center overflow-y-scroll rounded-2xl bg-white px-4 wrap-anywhere focus:outline-none"
             placeholder="Type a message"
             name="messageInput"
-            rows={1}
+            rows={2}
             // onInput={handleInput}
           />
           <FontAwesomeIcon icon={faPaperPlane} />
         </div>
         {selectedChat ? (
-          <ChatWindow messageArr={selectedChatMessage} userId={userId} />
+          <ChatWindow messageArr={selectedChatMessage} />
         ) : (
-          <div className="flex h-full items-center justify-center text-gray-400">
+          <div className="flex h-full w-full items-center justify-center text-gray-400">
             Select a chat to view messages
           </div>
         )}
