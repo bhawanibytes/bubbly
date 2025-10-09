@@ -11,10 +11,10 @@ export default function authMiddleware<T = any>(
     try {
       const cookies = cookieParser(req)
       if (!cookies.accessToken) throw new Error("Access token missing")
-      const decoded = jwt.verify(cookies.accessToken, secret)
+      const verifiedData = jwt.verify(cookies.accessToken, secret)
       // @ts-ignore attach user to res
-      logger.info(`decoded: ${decoded}`, decoded)
-      res.user = decoded
+      logger.info(`Verified Data: ${verifiedData}`, verifiedData)
+      res.user = verifiedData
       // call the handlers
       next(res, req)
     } catch (error: any) {
