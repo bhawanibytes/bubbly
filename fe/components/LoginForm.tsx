@@ -15,11 +15,8 @@ import { LoginBody } from "@shared/types/auth.type";
 import { toast } from "sonner";
 import { useLoginUserMutation } from "@/features/auth/authApi";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { userDetailsFromBE } from "@/features/auth/authSlice";
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
   const router = useRouter();
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [pinVisible, setPinVisible] = useState(false);
@@ -32,14 +29,7 @@ const LoginForm = () => {
         loading: "Logging in...",
         success: (result) => {
           if (result.success) {
-            localStorage.setItem("userId", result.data.userId);
-            dispatch(
-              userDetailsFromBE({
-                number: result.data.number,
-                userId: result.data.userId,
-              })
-            );
-            console.log(`loginPage: ${result.data.userId}`);
+            localStorage.setItem("userNumber", result.data.userNumber);
             setTimeout(() => {
               router.push("/dashboard");
             }, 1000);
