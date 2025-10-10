@@ -1,7 +1,7 @@
-import { selectChat } from "@/features/dashboard/dashboardSlice";
+import { setSelectedChat } from "@/features/dashboard/dashboardSlice";
 import { useDispatch } from "react-redux";
 
-interface ChatTilesType {
+export interface ChatTilesType {
   chatDisplayName: string;
   lastMessage: string | null;
   chatId: string;
@@ -18,7 +18,7 @@ export default function ChatTiles({
     <div
       className="min-w-[80%] cursor-pointer rounded-2xl bg-white px-2 py-1 shadow"
       onClick={() => {
-        dispatch(selectChat({ chatId: chatId }));
+        dispatch(setSelectedChat({ chatId: chatId }));
         // console.log(`selected: ${chatId}`);
       }}
     >
