@@ -1,11 +1,16 @@
 import { db } from "@/db/db"
 import { UWSReq, UWSRes } from "@/types/type.uws"
-import { fetchMesssagesBody } from "@shared/types/messages.type"
-import { eq, inArray, ne } from "drizzle-orm"
+import {
+  fetchMesssagesBody,
+  SendMessageBodyType,
+} from "@shared/types/messages.type"
+import { and, eq, inArray, ne } from "drizzle-orm"
 import Response from "@shared/types/response.type"
 import { chats } from "@/db/schema/chats"
 import { users } from "@/db/schema/users"
 import { chatMembers } from "@/db/schema/chatMembers"
+import logger from "@/configs/logger.config"
+import { messages } from "@/db/schema/messages"
 
 // sendMessage (text, emoji, media, replies)
 
@@ -56,6 +61,72 @@ export async function fetchAllChatsAndMessages(
     status: "200 OK",
     message: "Here is your all messages of this chat",
     data: { userId, userNumber, messageRecords },
+  }
+}
+
+// send a message in a given chatId of DM
+export async function sendDM(
+  res: UWSRes,
+  req: UWSReq,
+  body: SendMessageBodyType,
+): Promise<Response> {
+  const senderId = res.user.id
+  // logger.info(`user from middleware in sendDm controller`, res.user)
+  const { chatId, messageContent, messageType, replyedTo } = body
+  logger.info(`Body received in controller`, body)
+
+  //ensure minimum required parameters, senderId, chatId, messageContent received correctly
+  if (!senderId || !chatId || !messageContent) {
+    return {
+      success: false,
+      status: "400 Bad Request",
+      message: "All arg required",
+    }
+  }
+
+  try {
+    // is this sender part of this chat? if yes, send message if not return
+    const [senderMembership] = await db
+      .select()
+      .from(chatMembers)
+      .where(
+        and(eq(chatMembers.chatId, chatId), eq(chatMembers.userId, senderId)),
+      )
+    logger.info(
+      `Sender's membership from sendDm controller: ${senderMembership}`,
+      senderMembership,
+    )
+    if (!senderMembership) {
+      return {
+        success: false,
+        status: "400 Bad Request",
+        message: "Dont do this, you will be caught.",
+      }
+    }
+    const [isMessageSaved] = await db
+      .insert(messages)
+      .values({
+        chatId: chatId,
+        senderId: senderId,
+        content: messageContent,
+        messageType: messageType,
+        replyTo: replyedTo,
+      })
+      .returning()
+
+    return {
+      success: true,
+      status: "201 Created",
+      message: "Message saved",
+      data: isMessageSaved,
+    }
+  } catch (error) {
+    logger.error(`handler crashed with the error:`, error)
+    return {
+      success: false,
+      status: "500 Internal Server Error",
+      message: "Something Went Wrong",
+    }
   }
 }
 
