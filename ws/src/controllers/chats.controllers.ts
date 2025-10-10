@@ -2,16 +2,16 @@ import { db } from "@db/db"
 import { chats } from "@schema/chats"
 import { users } from "@schema/users"
 import logger from "@configs/logger.config"
-import { and, eq, inArray, sql } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import { chatMembers } from "@schema/chatMembers"
 import Response from "@shared/types/response.type"
 import {
   CreateDmChatBody,
   leaveGroupBody,
-  SendDmBody,
+  // SendDmBody,
 } from "@shared/types/chat.type"
-import { messages } from "@/db/schema/messages"
+// import { messages } from "@schema/messages"
 
 // createChat (1-to-1 or group)
 
@@ -125,85 +125,132 @@ export async function createDmChat(
   }
 }
 
-// send a dm message
-export async function sendDm(
-  res: UWSRes,
-  req: UWSReq,
-  body: SendDmBody,
-): Promise<Response> {
-  const senderId = res.user.id
-  logger.info(`user from middleware in sendDm controller`, res.user)
-  const { chatId, messageContent, receiverNumber, messegeType, replyedTo } =
-    body
+// // send a dm message
+// export async function sendDm(
+//   res: UWSRes,
+//   req: UWSReq,
+//   body: SendDmBody,
+// ): Promise<Response> {
+//   const senderId = res.user.id
+//   logger.info(`user from middleware in sendDm controller`, res.user)
+//   const { chatId, messageContent, receiverNumber, messageType, replyedTo } =
+//     body
 
-  //ensure senderId, chatId, receiverNumber, message received correctly
-  if (!senderId || !chatId || !receiverNumber || !messageContent) {
-    return {
-      success: false,
-      status: "400 Bad Request",
-      message: "All arg required",
-    }
-  }
+//   //ensure senderId, chatId, receiverNumber, message received correctly
+//   if (!senderId || !chatId || !receiverNumber || !messageContent) {
+//     return {
+//       success: false,
+//       status: "400 Bad Request",
+//       message: "All arg required",
+//     }
+//   }
 
-  try {
-    // finds if receiver has an account, else returns
-    const [receiver] = await db
-      .select()
-      .from(users)
-      .where(
-        and(eq(users.phoneNumber, receiverNumber), eq(users.isVerified, true)),
-      )
-    logger.info(`receiver from sendDm controller:`, receiver)
-    if (!receiver) {
-      return {
-        success: false,
-        status: "404 Not Found",
-        message: "User not found",
-      }
-    }
+//   try {
+//     // finds if receiver has an account, else returns
+//     const [receiver] = await db
+//       .select()
+//       .from(users)
+//       .where(
+//         and(eq(users.phoneNumber, receiverNumber), eq(users.isVerified, true)),
+//       )
+//     logger.info(`receiver from sendDm controller:`, receiver)
+//     if (!receiver) {
+//       return {
+//         success: false,
+//         status: "404 Not Found",
+//         message: "User not found",
+//       }
+//     }
 
-    // is this sender part of this chat? if yes, send message if not return
-    const senderMembership = await db
-      .select()
-      .from(chatMembers)
-      .where(
-        and(eq(chatMembers.chatId, chatId), eq(chatMembers.userId, senderId)),
-      )
-    logger.info(
-      `Sender's membership from sendDm controller: ${senderMembership}`,
-      senderMembership,
-    )
-    if (!senderMembership) {
-      return {
-        success: false,
-        status: "400 Bad Request",
-        message: "Dont do this, you will be caught.",
-      }
-    }
-    const [isMessageSaved] = await db
-      .insert(messages)
-      .values({
-        chatId: chatId,
-        senderId: senderId,
-        content: messageContent,
-        messageType: messegeType,
-        replyTo: replyedTo,
-      })
-      .returning()
+//     // is this sender part of this chat? if yes, send message if not return
+//     const [senderMembership] = await db
+//       .select()
+//       .from(chatMembers)
+//       .where(
+//         and(eq(chatMembers.chatId, chatId), eq(chatMembers.userId, senderId)),
+//       )
+//     logger.info(
+//       `Sender's membership from sendDm controller: ${senderMembership}`,
+//       senderMembership,
+//     )
+//     if (!senderMembership) {
+//       return {
+//         success: false,
+//         status: "400 Bad Request",
+//         message: "Dont do this, you will be caught.",
+//       }
+//     }
+//     const [isMessageSaved] = await db
+//       .insert(messages)
+//       .values({
+//         chatId: chatId,
+//         senderId: senderId,
+//         content: messageContent,
+//         messageType: messageType,
+//         replyTo: replyedTo,
+//       })
+//       .returning()
 
-    return {
-      success: true,
-      status: "201 Created",
-      message: "Message saved",
-      data: isMessageSaved,
-    }
-  } catch (error) {
-    logger.error(`handler crashed with the error:`, error)
-    return {
-      success: false,
-      status: "500 Internal Server Error",
-      message: "Something Went Wrong",
-    }
+//     return {
+//       success: true,
+//       status: "201 Created",
+//       message: "Message saved",
+//       data: isMessageSaved,
+//     }
+//   } catch (error) {
+//     logger.error(`handler crashed with the error:`, error)
+//     return {
+//       success: false,
+//       status: "500 Internal Server Error",
+//       message: "Something Went Wrong",
+//     }
+//   }
+// }
+
+// fetch all/few chats of an user
+export async function fetchChats(res: UWSRes, req: UWSReq): Promise<Response> {
+  const userId = res.user.id
+  const rawChatList = await db.query.users.findMany({
+    where: eq(users.id, userId),
+    with: {
+      allChatMembershipOfUser: {
+        columns: {
+          chatId: true,
+        },
+        orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],
+      },
+      // chatMembers: {      orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],    },    messages:       orderBy: (messages, { desc }) => [desc(messages.createdAt)],    },
+    },
+  })
+  // .select({
+  //   chatId: chats.id,
+  //   isGroup: chats.isGroup,
+  //   groupName: chats.groupName,
+  // })
+  // .from(chats)
+  // .innerJoin(chatMembers, eq(chats.id, chatMembers.chatId))
+  // .where(eq(chatMembers.userId, userId))
+
+  // const dmChatId = rawChatList
+  //   .filter((chat) => chat.isGroup === false)
+  //   .map((chat) => chat.chatId)
+
+  // const listWithNumbers = await db
+  //   .select({ chatId: chatMembers.chatId, userNumber: users.phoneNumber })
+  //   .from(chatMembers)
+  //   .innerJoin(users, eq(users.id, chatMembers.userId))
+  //   .where(
+  //     and(
+  //       inArray(chatMembers.chatId, dmChatId),
+  //       ne(chatMembers.userId, userId),
+  //     ),
+  //   )
+
+  return {
+    success: true,
+    status: "200 OK",
+    message: "Here is your all chats",
+    data: rawChatList,
   }
 }
 

@@ -1,3 +1,5 @@
+import Response from "./response.type";
+
 type TypeOfChatID = {
   chatId: string;
 };
@@ -5,7 +7,6 @@ type TypeOfChatID = {
 export interface fetchMesssagesBody {
   chatId: TypeOfChatID[];
 }
-import Response from "./response.type";
 
 export interface fetchAllChatsAndMessagesResponse extends Response {
   id: string;
@@ -18,6 +19,15 @@ export interface fetchAllChatsAndMessagesResponse extends Response {
   lastMessageContent: string | null;
   lastMessageTimestamp: Date | null;
   lastMessageSender: string | null;
+  membersOfThisChat: {
+    chatId: string;
+    userId: string;
+    role: string;
+    joinedAt: Date;
+    userToWhichThisMembershipBelongTo: {
+      phoneNumber: string;
+    };
+  }[];
   allMessagesOfThisChat: {
     id: string;
     createdAt: Date;
@@ -26,5 +36,22 @@ export interface fetchAllChatsAndMessagesResponse extends Response {
     content: string;
     messageType: "text" | "image" | "video" | "voice" | "doc";
     replyTo: string | null;
+    senderOfThisMessage: {
+      phoneNumber: string;
+    };
   }[];
+}
+export enum MessageEnum {
+  text = "text",
+  image = "image",
+  video = "video",
+  voice = "voice",
+  doc = "doc",
+}
+export interface SendMessageBodyType {
+  chatId: string;
+  messageContent: string;
+  messageType: MessageEnum;
+  replyedTo: null | string;
+  // attachement: null | string;
 }
