@@ -1,29 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchAllChatsAndMessagesResponse } from "@shared/types/messages.type";
 
-interface DashboardState {
+export interface DashboardStateType {
   dashboardState: fetchAllChatsAndMessagesResponse[] | [];
   selectedChat: string;
+  draftMessage: string;
 }
-const initialState: DashboardState = {
+const initialState: DashboardStateType = {
   dashboardState: [],
-  selectedChat: "",  
+  selectedChat: "",
+  draftMessage: "",
 };
 
 export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    firstLoad: (state, action) => {
+    setDashboardState: (state, action) => {
       const { dashboardState } = action.payload;
       state.dashboardState = dashboardState;
     },
-    selectChat: (state, action) => {
+    setSelectedChat: (state, action) => {
       const { chatId } = action.payload;
       state.selectedChat = chatId;
+    },
+    setDraftMessage: (state, action) => {
+      const { draftMessage } = action.payload;
+      state.draftMessage = draftMessage;
     },
   },
 });
 
-export const { firstLoad, selectChat } = dashboardSlice.actions;
+export const { setDashboardState, setSelectedChat, setDraftMessage } =
+  dashboardSlice.actions;
 export default dashboardSlice.reducer;
