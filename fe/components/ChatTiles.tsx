@@ -10,7 +10,7 @@ export interface ChatTilesType {
 export default function ChatTiles({
   chatDisplayName,
   lastMessage,
-  chatId
+  chatId,
 }: ChatTilesType) {
   const dispatch = useDispatch();
 
