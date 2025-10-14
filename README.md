@@ -5,7 +5,7 @@
  React,
  Next.js,
  TailwindCSS,
- ShadCN,
+ <!-- ShadCN, -->
 
 ## Backend
  TypeScript,
