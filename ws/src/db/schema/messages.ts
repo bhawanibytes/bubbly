@@ -53,3 +53,7 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
   }),
   messageStatusesOfThisMessageToDifferentUsers: many(messageStatus),
 }))
+
+export type MessageTableSelect = typeof messages.$inferSelect
+export type MessageTableInsert = typeof messages.$inferInsert
+export type MessageEnum = typeof messageTypeEnum.enumValues[number]

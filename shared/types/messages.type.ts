@@ -1,13 +1,33 @@
 import Response from "./response.type";
-
-type TypeOfChatID = {
-  chatId: string;
-};
-
+import type {
+  MessageTableSelect,
+  MessageTableInsert,
+  MessageEnum,
+} from "../../ws/src/db/schema/messages";
+/**
+ * Written Types for Message Controllers' Body.
+ * @param {number} a - The first number.
+ * @param {number} b - The second number.
+ * @export {interfaces} Interfaces to be used in Message Controllers.
+ */
 export interface fetchMesssagesBody {
-  chatId: TypeOfChatID[];
+  chatId: MessageTableSelect["chatId"];
+}
+export interface SendMessageBodyType {
+  chatId: MessageTableSelect["chatId"];
+  content: MessageTableSelect["content"];
+  messageType: MessageTableSelect["messageType"];
+  replyTo: MessageTableSelect["replyTo"];
 }
 
+/**
+ * Generated as well altered Types from Message Tables and Message Controllers return types.
+ * @export {interfaces} Interfaces to be used in Frontend States And APIs.
+ */
+export { MessageTableSelect, MessageTableInsert, MessageEnum };
+export interface sendDmResponseType extends Response {
+  data: MessageTableSelect;
+}
 export interface fetchAllChatsAndMessagesResponse extends Response {
   id: string;
   isGroup: boolean;
@@ -40,18 +60,4 @@ export interface fetchAllChatsAndMessagesResponse extends Response {
       phoneNumber: string;
     };
   }[];
-}
-export enum MessageEnum {
-  text = "text",
-  image = "image",
-  video = "video",
-  voice = "voice",
-  doc = "doc",
-}
-export interface SendMessageBodyType {
-  chatId: string;
-  messageContent: string;
-  messageType: MessageEnum;
-  replyedTo: null | string;
-  // attachement: null | string;
 }

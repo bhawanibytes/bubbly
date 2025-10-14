@@ -72,11 +72,11 @@ export async function sendDM(
 ): Promise<Response> {
   const senderId = res.user.id
   // logger.info(`user from middleware in sendDm controller`, res.user)
-  const { chatId, messageContent, messageType, replyedTo } = body
+  const { chatId, content, messageType, replyTo } = body
   logger.info(`Body received in controller`, body)
 
   //ensure minimum required parameters, senderId, chatId, messageContent received correctly
-  if (!senderId || !chatId || !messageContent) {
+  if (!senderId || !chatId || !content) {
     return {
       success: false,
       status: "400 Bad Request",
@@ -108,9 +108,9 @@ export async function sendDM(
       .values({
         chatId: chatId,
         senderId: senderId,
-        content: messageContent,
+        content,
         messageType: messageType,
-        replyTo: replyedTo,
+        replyTo,
       })
       .returning()
 
