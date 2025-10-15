@@ -4,8 +4,9 @@ import logger from "@configs/logger.config"
 import getCORSHeaders from "@utils/getCorsHeaders"
 import registerChatRoutes from "@routes/chat.route"
 import registerMessageRoutes from "./routes/message.route"
-
-const port = 4000
+import { registerIntegrationRoutes } from "@routes/integration.routes"
+import { env } from "@configs/env.config"
+const port = env.SERVER_PORT
 const app = uWS.App()
 
 // handle cors; write cors headers to preflight iteratively
@@ -49,7 +50,7 @@ app.ws("/*", {
 registerAuthRoutes(app)
 registerChatRoutes(app)
 registerMessageRoutes(app)
-
+registerIntegrationRoutes(app)
 //
 app.post("/test", (res, req) => {
   res.writeStatus("400 Bad Request")
