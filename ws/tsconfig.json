@@ -13,7 +13,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "noEmit": false,
     "paths": {
-      "@/*": ["./src/*"],
       "@configs/*": ["./src/configs/*"],
       "@controllers/*": ["./src/controllers/*"],
       "@db/*": ["./src/db/*"],
@@ -22,7 +21,8 @@
       "@routes/*": ["./src/routes/*"],
       "@utils/*": ["./src/utils/*"],
       "@wrappers/*": ["./src/wrappers/*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../shared/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "**/*.ts"]

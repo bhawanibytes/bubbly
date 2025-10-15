@@ -199,7 +199,7 @@ export async function login(
       const accessToken = jwt.sign(
         {
           id: user.id,
-          number: user.phoneNumber
+          number: user.phoneNumber,
         },
         secret,
         {
@@ -209,7 +209,7 @@ export async function login(
       const refreshToken = jwt.sign(
         {
           id: user.id,
-          number: user.phoneNumber
+          number: user.phoneNumber,
         },
         secret,
         {

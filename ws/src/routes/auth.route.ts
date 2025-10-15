@@ -5,9 +5,9 @@ import {
   signup,
   verifyForgetPin,
   verifySignup,
-} from "../controllers/auth.controllers"
-import { AppType } from "../types/type.uws"
-import wrapper from "../wrappers/asyncJsonCorsMiddleware.wrapper"
+} from "@controllers/auth.controllers"
+import { AppType } from "@/types/type.uws"
+import wrapper from "@wrappers/asyncJsonCorsMiddleware.wrapper"
 
 export function registerAuthRoutes(app: AppType) {
   app.post("/signup", wrapper(signup))
