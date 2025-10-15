@@ -8,7 +8,7 @@ import generateOtp from "@utils/generateOtp"
 import sendOtp from "@configs/message.config"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import Response from "@shared/types/response.type"
-import { secret, slatRounds } from "@configs/env.config"
+import { env } from "@configs/env.config"
 import {
   SignupBody,
   VerifySignupBody,
@@ -54,7 +54,7 @@ export async function signup(
     // save user if user is not saved in db
     if (!userExists) {
       // hash pin and save user to db
-      const hashedPin = await bcrypt.hash(pin, slatRounds)
+      const hashedPin = await bcrypt.hash(pin, env.SLAT_ROUNDS)
       const insertedUser = await db.insert(users).values({
         name: fullname,
         phoneNumber: number,
@@ -201,7 +201,7 @@ export async function login(
           id: user.id,
           number: user.phoneNumber,
         },
-        secret,
+        env.JWT_SECRET,
         {
           expiresIn: "1D",
         },
@@ -211,7 +211,7 @@ export async function login(
           id: user.id,
           number: user.phoneNumber,
         },
-        secret,
+        env.JWT_SECRET,
         {
           expiresIn: "7D",
         },
@@ -370,7 +370,7 @@ export async function setPin(
     // Delete the token so it can't be reused
     await cache.del(`setPinToken:${number}`)
     // update pin after hashing it
-    const hashedPin = await bcrypt.hash(userPin, slatRounds)
+    const hashedPin = await bcrypt.hash(userPin, env.SLAT_ROUNDS)
     const [updatedUser] = await db
       .update(users)
       .set({ pin: hashedPin })

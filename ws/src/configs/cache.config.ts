@@ -1,8 +1,8 @@
 import { createClient } from "redis"
-import { redisUrl } from "./env.config.js"
+import { env } from "./env.config"
 
 const cache = createClient({
-  url: redisUrl,
+  url: env.REDIS_URL,
 })
 
 cache.on("error", (err) => console.error("Redis Client Error", err))

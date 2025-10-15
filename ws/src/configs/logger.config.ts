@@ -1,5 +1,5 @@
 import { addColors, createLogger, format, transports } from "winston"
-import { nodeEnv } from "./env.config"
+import { env } from "./env.config"
 //colors
 const colors = {
   info: "blue",
@@ -41,7 +41,7 @@ const loggerTransports: (
   }),
 ]
 
-if (nodeEnv === "development") {
+if (env.NODE_ENV === "development") {
   loggerTransports.push(
     new transports.Console({
       format: format.combine(

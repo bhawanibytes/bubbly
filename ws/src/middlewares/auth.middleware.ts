@@ -1,4 +1,4 @@
-import { secret } from "../configs/env.config"
+import { env } from "../configs/env.config"
 import { UWSReq, UWSRes } from "../types/type.uws"
 import logger from "../configs/logger.config"
 import cookieParser from "../utils/cookieParser"
@@ -11,7 +11,7 @@ export default function authMiddleware<T = any>(
     try {
       const cookies = cookieParser(req)
       if (!cookies.accessToken) throw new Error("Access token missing")
-      const verifiedData = jwt.verify(cookies.accessToken, secret)
+      const verifiedData = jwt.verify(cookies.accessToken, env.JWT_SECRET)
       // @ts-ignore attach user to res
       logger.info(`Verified Data: ${verifiedData}`, verifiedData)
       res.user = verifiedData
