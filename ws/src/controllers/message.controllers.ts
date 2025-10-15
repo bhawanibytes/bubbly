@@ -26,7 +26,7 @@ export async function fetchAllChatsAndMessages(
     columns: {
       chatId: true,
     },
-    orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],
+    orderBy: (chatMembers, { desc }) => [desc(chatMembers.createdAt)],
   })
   const arrOfChat = allChats.map((chatObj) => chatObj.chatId)
   const messageRecords = await db.query.chats.findMany({
@@ -137,7 +137,7 @@ export async function fetchMessages(
   body: fetchMesssagesBody,
 ): Promise<Response> {
   const userId = res.user.id
-  const { chatId } = body
+  // const { chatId } = body
   const listOfChats = await db.query.users.findMany({
     where: eq(users.id, userId),
     with: {
@@ -145,7 +145,7 @@ export async function fetchMessages(
         columns: {
           chatId: true,
         },
-        orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],
+        orderBy: (chatMembers, { desc }) => [desc(chatMembers.createdAt)],
       },
       // chatMembers: {      orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],    },    messages:       orderBy: (messages, { desc }) => [desc(messages.createdAt)],    },
     },

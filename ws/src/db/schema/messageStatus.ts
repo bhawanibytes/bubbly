@@ -8,26 +8,28 @@ import {
 import { messages } from "./messages"
 import { users } from "./users"
 import { relations } from "drizzle-orm"
+import { timestamps } from "@db/columnHelper"
 
 export const messageStatusPerPersonEnum = pgEnum("message_status_per_person", [
-  "not-delivered",
+  "not_delivered",
   "delivered",
   "read",
 ])
 export const messageStatus = pgTable(
-  "messageStatus",
+  "message_status",
   {
-    messageId: uuid("message_id")
+    messageId: uuid()
       .notNull()
       .references(() => messages.id),
-    userId: uuid("user_id")
+    userId: uuid()
       .notNull()
       .references(() => users.id),
     status: messageStatusPerPersonEnum("status")
-      .default("not-delivered")
+      .default("not_delivered")
       .notNull(),
-    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
-    readAt: timestamp("read_at", { withTimezone: true }),
+    deliveredAt: timestamp({ withTimezone: true }),
+    readAt: timestamp({ withTimezone: true }),
+    ...timestamps,
   },
   (table) => [primaryKey({ columns: [table.messageId, table.userId] })],
 )

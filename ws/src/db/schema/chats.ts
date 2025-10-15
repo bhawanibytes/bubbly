@@ -10,32 +10,29 @@ import {
 import { users } from "./users"
 import { messages } from "./messages"
 import { chatMembers } from "./chatMembers"
+import { timestamps } from "@db/columnHelper"
 
 export const chats = pgTable(
   "chats",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    isGroup: boolean("is_group").notNull(),
-    groupName: text("group_name"),
-    groupPicture: text("group_picture"),
-    createdBy: uuid("created_by")
+    id: uuid().defaultRandom().primaryKey(),
+    isGroup: boolean().notNull(),
+    groupName: text(),
+    groupPicture: text(),
+    createdBy: uuid()
       .references(() => users.id)
       .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    lastMessageId: uuid("last_message_id").references(
-      (): AnyPgColumn => messages.id,
-    ),
-    lastMessageContent: text("last_message_content"),
-    lastMessageTimestamp: timestamp("last_message_timestamp", {
+    lastMessageId: uuid().references((): AnyPgColumn => messages.id),
+    lastMessageContent: text(),
+    lastMessageTimestamp: timestamp({
       withTimezone: true,
     }),
-    lastMessageSender: uuid("last_message_sender").references(() => users.id),
+    lastMessageSender: uuid().references(() => users.id),
+    ...timestamps,
   },
-  (table) => ({
-    groupNameCheck: sql`CHECK ((is_group = false) OR (is_group = true AND group_name IS NOT NULL))`,
-  }),
+  (table) => [
+    sql`CHECK ((is_group = false) OR (is_group = true AND group_name IS NOT NULL))`,
+  ],
 )
 
 export const chatsRelations = relations(chats, ({ one, many }) => ({

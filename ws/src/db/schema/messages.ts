@@ -10,6 +10,7 @@ import {
 import { chats } from "./chats"
 import { users } from "./users"
 import { messageStatus } from "./messageStatus"
+import { timestamps } from "@db/columnHelper"
 
 export const messageTypeEnum = pgEnum("message_type", [
   "text",
@@ -19,19 +20,17 @@ export const messageTypeEnum = pgEnum("message_type", [
   "doc",
 ])
 export const messages = pgTable("messages", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  chatId: uuid("chat_id")
+  id: uuid().defaultRandom().primaryKey(),
+  chatId: uuid()
     .notNull()
     .references(() => chats.id),
-  senderId: uuid("sender_id")
+  senderId: uuid()
     .notNull()
     .references(() => users.id),
-  content: text("content").notNull(),
-  messageType: messageTypeEnum("message_type").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  replyTo: uuid("reply_to").references((): AnyPgColumn => messages.id),
+  content: text().notNull(),
+  messageType: messageTypeEnum().notNull(),
+  replyTo: uuid().references((): AnyPgColumn => messages.id),
+  ...timestamps,
 })
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
@@ -56,4 +55,4 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
 
 export type MessageTableSelect = typeof messages.$inferSelect
 export type MessageTableInsert = typeof messages.$inferInsert
-export type MessageEnum = typeof messageTypeEnum.enumValues[number]
+export type MessageEnum = (typeof messageTypeEnum.enumValues)[number]

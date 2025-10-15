@@ -217,7 +217,7 @@ export async function fetchChats(res: UWSRes, req: UWSReq): Promise<Response> {
         columns: {
           chatId: true,
         },
-        orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],
+        orderBy: (chatMembers, { desc }) => [desc(chatMembers.createdAt)],
       },
       // chatMembers: {      orderBy: (chatMembers, { desc }) => [desc(chatMembers.joinedAt)],    },    messages:       orderBy: (messages, { desc }) => [desc(messages.createdAt)],    },
     },

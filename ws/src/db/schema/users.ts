@@ -1,19 +1,34 @@
 import { relations } from "drizzle-orm"
 import { chats } from "./chats"
 import { messages } from "./messages"
-import { pgTable, text, boolean, uuid, timestamp } from "drizzle-orm/pg-core"
+import {
+  pgTable,
+  text,
+  boolean,
+  uuid,
+  timestamp,
+  varchar,
+  integer,
+} from "drizzle-orm/pg-core"
 import { chatMembers } from "./chatMembers"
 import { messageStatus } from "./messageStatus"
+import { timestamps } from "@db/columnHelper"
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  phoneNumber: text("phone_number").unique().notNull(),
-  pin: text("pin").notNull(),
-  profilePicture: text("profile_picture"),
-  lastSeen: timestamp("last_seen", { withTimezone: true }),
-  isVerified: boolean("is_verified").notNull().default(false),
-  verifiedAt: timestamp("verified_at", { withTimezone: true }),
+  id: uuid().primaryKey().defaultRandom(),
+  name: varchar({ length: 255 }).notNull(),
+  phoneNumber: varchar({ length: 255 }).unique().notNull(),
+  pin: varchar({ length: 255 }).notNull(),
+  profilePicture: text(),
+  lastSeen: timestamp({ withTimezone: true }),
+  isVerified: boolean().notNull().default(false),
+  verifiedAt: timestamp({ withTimezone: true }),
+  googleEmail: varchar({ length: 255 }),
+  googleAccessToken: text(),
+  googleAccessExpiry: integer(),
+  googleRefreshToken: text(),
+  googleRefreshExpiry: text(),
+  ...timestamps,
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -25,5 +40,5 @@ export const usersRelations = relations(users, ({ many }) => ({
   }),
   allChatMembershipOfUser: many(chatMembers),
   allMessagesOfUser: many(messages),
-  messageStatusesOfUser: many(messageStatus), // ✅ Plural for many relation
+  messageStatusesOfUser: many(messageStatus), // Plural for many relation
 }))
