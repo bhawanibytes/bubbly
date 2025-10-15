@@ -17,4 +17,5 @@ export const db = drizzle(client, {
     ...messageSchema,
     ...messageStatusSchema,
   },
+  casing: "snake_case",
 })
