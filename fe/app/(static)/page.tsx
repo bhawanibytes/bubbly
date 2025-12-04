@@ -1,8 +1,8 @@
-import HeroSection from "@/components/HeroSection";
-import KeyFeatures from "@/components/KeyFeatures";
-import Testimonials from "@/components/Testimonials";
-import ChatInterface from "@/components/ChatInterface";
-import Button from "@/components/Button";
+import HeroSection from "@components/HeroSection";
+import KeyFeatures from "@components/KeyFeatures";
+import Testimonials from "@components/Testimonials";
+import ChatInterface from "@components/ChatInterface";
+import Button from "@components/Button";
 
 export default function Home() {
   return (

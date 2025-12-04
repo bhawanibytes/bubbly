@@ -1,6 +1,11 @@
 import "./globals.css";
-import StoreProvider from "@/redux/StoreProvider";
-import { Toaster } from "sonner";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bubbly",
+  description:
+    "Enjoy Whatsapp & Discord both's at one platform: Bubbly, Made with Love ❤️ in India by Bhawani Singh",
+};
 
 export default function RootLayout({
   children,
@@ -9,12 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <StoreProvider>
-          <Toaster position="top-right" />
-          {children}
-        </StoreProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

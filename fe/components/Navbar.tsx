@@ -14,7 +14,7 @@ export default function Navbar() {
             height={16}
             priority
           />
-          <h1 className="text-lg font-bold">Bubbly Connect</h1>
+          <h1 className="text-lg font-bold">Dap Connect</h1>
         </Link>
       </div>
       <nav className="navlinks flex items-center gap-8">
