@@ -9,6 +9,7 @@ import {
   timestamp,
   varchar,
   integer,
+  bigint,
 } from "drizzle-orm/pg-core"
 import { chatMembers } from "./chatMembers"
 import { messageStatus } from "./messageStatus"
@@ -25,7 +26,7 @@ export const users = pgTable("users", {
   verifiedAt: timestamp({ withTimezone: true }),
   googleEmail: varchar({ length: 255 }),
   googleAccessToken: text(),
-  googleAccessExpiry: integer(),
+  googleAccessExpiry: bigint({mode: "number"}),
   googleRefreshToken: text(),
   googleRefreshExpiry: text(),
   ...timestamps,

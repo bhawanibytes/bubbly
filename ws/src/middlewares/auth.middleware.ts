@@ -13,13 +13,13 @@ export default function authMiddleware<T = any>(
       if (!cookies.accessToken) throw new Error("Access token missing")
       const verifiedData = jwt.verify(cookies.accessToken, env.JWT_SECRET)
       // @ts-ignore attach user to res
-      logger.info(`Verified Data: ${verifiedData}`, verifiedData)
+      logger.info(`Verified Data:`, JSON.stringify(verifiedData))
       res.user = verifiedData
+      console.info("attached details")
       // call the handlers
       next(res, req)
     } catch (error: any) {
       logger.error(`JWT Error: ${error.message}`, error)
-
       if (error.name === "TokenExpiredError") {
         res.writeStatus("401 Unauthorized").end("Token expired")
       } else {

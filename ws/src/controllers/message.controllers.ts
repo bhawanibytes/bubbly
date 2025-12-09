@@ -1,4 +1,4 @@
-import { db } from "@/db/db"
+import { db } from "@db/db"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import {
   fetchMesssagesBody,
@@ -6,11 +6,11 @@ import {
 } from "@shared/types/messages.type"
 import { and, eq, inArray, ne } from "drizzle-orm"
 import Response from "@shared/types/response.type"
-import { chats } from "@/db/schema/chats"
-import { users } from "@/db/schema/users"
-import { chatMembers } from "@/db/schema/chatMembers"
-import logger from "@/configs/logger.config"
-import { messages } from "@/db/schema/messages"
+import { chats } from "@db/schema/chats"
+import { users } from "@db/schema/users"
+import { chatMembers } from "@db/schema/chatMembers"
+import logger from "@configs/logger.config"
+import { messages } from "@db/schema/messages"
 
 // sendMessage (text, emoji, media, replies)
 
