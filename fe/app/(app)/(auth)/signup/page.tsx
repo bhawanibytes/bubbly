@@ -28,7 +28,7 @@ export default function Signup() {
         </div>
         <div className="mx-40 flex flex-grow items-center justify-around gap-10">
           {otpStatus ? <OtpForm /> : <SignupForm />}
-          <Button href="http://localhost:4000/google/auth">
+          <Button href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/google/auth`}>
           <FontAwesomeIcon icon={faGoogle} className="mx-2" />
             | Contacts
           </Button>
