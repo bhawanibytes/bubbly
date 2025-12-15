@@ -1,16 +1,48 @@
-import Response from "./response.type";
-import type {
-  MessageTableSelect,
-  MessageTableInsert,
-  MessageEnum,
-} from "../../ws/src/db/schema/messages";
 /**
  * Written Types for Message Controllers' Body.
  * @param {number} a - The first number.
  * @param {number} b - The second number.
  * @export {interfaces} Interfaces to be used in Message Controllers.
  */
-export interface fetchMesssagesBody {
+
+/**
+ * Generated as well altered Types from Message Tables and Message Controllers return types.
+ * @export {interfaces} Interfaces to be used in Frontend States And APIs.
+ */
+
+import Response from "./response.type";
+
+export enum MessageTypeEnum {
+  text = "text",
+  image = "image",
+  video = "video",
+  voice = "voice",
+  doc = "doc",
+}
+
+export type MessageTableInsert = {
+  chatId: string;
+  senderId: string;
+  content: string;
+  messageType: "text" | "image" | "video" | "voice" | "doc";
+  id?: string | undefined;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  replyTo?: string | null | undefined;
+};
+
+export type MessageTableSelect = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  chatId: string;
+  senderId: string;
+  content: string;
+  messageType: "text" | "image" | "video" | "voice" | "doc";
+  replyTo: string | null;
+};
+
+export interface fetchMessagesBody {
   chatId: MessageTableSelect["chatId"];
 }
 export interface SendMessageBodyType {
@@ -20,11 +52,6 @@ export interface SendMessageBodyType {
   replyTo: MessageTableSelect["replyTo"];
 }
 
-/**
- * Generated as well altered Types from Message Tables and Message Controllers return types.
- * @export {interfaces} Interfaces to be used in Frontend States And APIs.
- */
-export { MessageTableSelect, MessageTableInsert, MessageEnum };
 export interface sendDmResponseType extends Response {
   data: MessageTableSelect;
 }
@@ -50,6 +77,7 @@ export interface fetchAllChatsAndMessagesResponse extends Response {
   }[];
   allMessagesOfThisChat: {
     id: string;
+    updatedAt: Date;
     createdAt: Date;
     chatId: string;
     senderId: string;
