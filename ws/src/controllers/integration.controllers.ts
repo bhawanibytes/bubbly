@@ -116,7 +116,7 @@ export async function googleCallback(
             const phoneNumberArray = Object.keys(contactRecord || {})
 
             // check which contacts are registered and verified users on platform
-            const existingUsers = await db
+            const existingUsers = await tx
                 .select({ phoneNumber: users.phoneNumber })
                 .from(users)
                 .where(
