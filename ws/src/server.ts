@@ -1,11 +1,13 @@
 import uWS from "uWebSockets.js"
-import { registerAuthRoutes } from "@routes/auth.route"
+import { env } from "@configs/env.config"
 import logger from "@configs/logger.config"
 import getCORSHeaders from "@utils/getCorsHeaders"
 import registerChatRoutes from "@routes/chat.route"
+import registerAuthRoutes from "@routes/auth.route"
+import registerContactRoutes from "@routes/contact.route"
 import registerMessageRoutes from "./routes/message.route"
-import { registerIntegrationRoutes } from "@routes/integration.routes"
-import { env } from "@configs/env.config"
+import registerIntegrationRoutes from "@routes/integration.routes"
+
 const port = env.SERVER_PORT
 const app = uWS.App()
 
@@ -15,7 +17,7 @@ app.options("/*", (res, req) => {
   for (const key in corsHeaders) {
     res.writeHeader(key, corsHeaders[key])
   }
-  res.end("OK")
+  res.writeStatus("204 No Content").end()
 })
 
 // ws configs
@@ -50,13 +52,9 @@ app.ws("/*", {
 registerAuthRoutes(app)
 registerChatRoutes(app)
 registerMessageRoutes(app)
+registerContactRoutes(app)
 registerIntegrationRoutes(app)
-//
-app.post("/test", (res, req) => {
-  res.writeStatus("400 Bad Request")
-  res.writeHeader("Content-Type", "application/json")
-  res.end(JSON.stringify({ error: "Bad request" }))
-})
+// register all routes
 
 // catch all unmatched or bad req
 app.any("/*", (res, req) => {
@@ -67,10 +65,8 @@ app.any("/*", (res, req) => {
 // port and server config
 app.listen(port, (token) => {
   if (token) {
-    // console.log(`Listening to port ` + port);
     logger.info(`Listening to port ${port}`)
   } else {
-    // console.log(`Failed to listen to port ` + port);
     logger.error(`Failed to listen to port ${port}`)
   }
 })

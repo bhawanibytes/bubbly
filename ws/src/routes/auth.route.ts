@@ -7,13 +7,13 @@ import {
   verifySignup,
 } from "@controllers/auth.controllers"
 import { AppType } from "@/types/type.uws"
-import wrapper from "@wrappers/asyncJsonCorsMiddleware.wrapper"
+import asyncJsonCorsMiddleware from "@wrappers/asyncJsonCorsMiddleware.wrapper"
 
-export function registerAuthRoutes(app: AppType) {
-  app.post("/signup", wrapper(signup))
-  app.post("/verify-signup", wrapper(verifySignup))
-  app.post("/login", wrapper(login))
-  app.post("/forget-pin", wrapper(forgetPin))
-  app.post("/verify-forget-pin", wrapper(verifyForgetPin))
-  app.post("/set-pin", wrapper(setPin))
+export default function registerAuthRoutes(app: AppType) {
+  app.post("/signup", asyncJsonCorsMiddleware(signup))
+  app.post("/verify-signup", asyncJsonCorsMiddleware(verifySignup))
+  app.post("/login", asyncJsonCorsMiddleware(login))
+  app.post("/forget-pin", asyncJsonCorsMiddleware(forgetPin))
+  app.post("/verify-forget-pin", asyncJsonCorsMiddleware(verifyForgetPin))
+  app.post("/set-pin", asyncJsonCorsMiddleware(setPin))
 }
