@@ -8,12 +8,12 @@ import {
   uuid,
   timestamp,
   varchar,
-  integer,
   bigint,
 } from "drizzle-orm/pg-core"
 import { chatMembers } from "./chatMembers"
 import { messageStatus } from "./messageStatus"
 import { timestamps } from "@db/columnHelper"
+import { contacts } from "./contacts"
 
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -42,4 +42,5 @@ export const usersRelations = relations(users, ({ many }) => ({
   allChatMembershipOfUser: many(chatMembers),
   allMessagesOfUser: many(messages),
   messageStatusesOfUser: many(messageStatus), // Plural for many relation
+  allContactsOfUser: many(contacts),
 }))
