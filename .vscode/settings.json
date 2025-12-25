@@ -1,6 +1,7 @@
 {
   "editor.defaultFormatter": "prettier.prettier-vscode",
   "editor.formatOnSave": true,
-  "files.autoSave": "afterDelay"
-  // "editor.indentSize": "tabSize"
+  "files.autoSave": "afterDelay",
+  "editor.indentSize": "tabSize",
+  "editor.detectIndentation": false
 }
