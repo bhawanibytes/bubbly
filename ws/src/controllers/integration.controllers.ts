@@ -16,7 +16,13 @@ import { contacts } from "@db/schema/contacts"
 export async function googleAuth(res: UWSRes, req: UWSReq): Promise<Response> {
     logger.info("came in googleAuth")
     logger.debug("user :", res.user)
-    const GOOGLE_SCOPE = "https://www.googleapis.com/auth/contacts.readonly"
+    const GOOGLE_SCOPE = [
+        "openid",
+        "email",
+        "profile",
+        "https://www.googleapis.com/auth/contacts.readonly",
+    ].join(" ")
+
     const state = randomBytes(16).toString("hex")
     logger.info({ state })
     const userPhoneNumber = res.user.number
