@@ -60,7 +60,9 @@ export async function fetchAllChatsAndMessages(
             },
             orderBy: (chats, { desc }) => [desc(chats.lastMessageTimestamp)],
         })
-        const contactRecords = await tx.query.contacts.findMany({
+
+        // fetch Contacts in a Array
+        const contactRecordsArray = await tx.query.contacts.findMany({
             where: eq(contacts.userId, userId),
             columns: {
                 contactName: true,
@@ -69,35 +71,21 @@ export async function fetchAllChatsAndMessages(
             },
         })
 
+        let contactRecords: Record<
+            "contactMap" | "availabilityMap",
+            Record<string, string>
+        > = {
+            contactMap: {},
+            availabilityMap: {},
+        }
+
+        contactRecordsArray.forEach((c) => {
+            contactRecords.contactMap[c.contactName] = c.contactNumber
+            contactRecords.availabilityMap[c.contactName] = c.contactNumber
+        })
+
         return { messageRecords, contactRecords }
     })
-    // const messageRecords = await db.query.chats.findMany({
-    //   where: inArray(chats.id, arrOfChat),
-    //   with: {
-    //     allMessagesOfThisChat: {
-    //       with: {
-    //         senderOfThisMessage: {
-    //           columns: {
-    //             phoneNumber: true,
-    //           },
-    //         },
-    //       },
-    //       orderBy: (messages, { asc }) => [asc(messages.createdAt)],
-    //     },
-    //     membersOfThisChat: {
-    //       where: ne(chatMembers.userId, userId),
-    //       with: {
-    //         userToWhichThisMembershipBelongTo: {
-    //           columns: {
-    //             phoneNumber: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    //   orderBy: (chats, { desc }) => [desc(chats.lastMessageTimestamp)],
-    // })
-    // fetch contract records
 
     return {
         success: true,
