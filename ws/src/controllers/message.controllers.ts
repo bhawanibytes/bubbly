@@ -84,7 +84,26 @@ export async function fetchAllChatsAndMessages(
             contactRecords.availabilityMap[c.contactName] = c.contactNumber
         })
 
-        return { messageRecords, contactRecords }
+        const googleTokens = await tx.query.users.findFirst({
+            where: eq(users.phoneNumber, userNumber),
+            columns: {
+                googleAccessToken: true,
+                googleRefreshToken: true,
+            },
+        })
+
+        if (
+            !googleTokens ||
+            !googleTokens.googleAccessToken ||
+            !googleTokens.googleRefreshToken
+        ) {
+            return {
+                messageRecords,
+                contactRecords,
+                contactIntergration: false,
+            }
+        }
+        return { messageRecords, contactRecords, contactIntergration: true }
     })
 
     return {
@@ -94,6 +113,7 @@ export async function fetchAllChatsAndMessages(
         data: {
             userId,
             userNumber,
+            contactIntergration: dbQuery.contactIntergration,
             messageRecords: dbQuery.messageRecords,
             contactRecords: dbQuery.contactRecords,
         },

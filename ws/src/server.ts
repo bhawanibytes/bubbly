@@ -5,6 +5,7 @@ import getCORSHeaders from "@utils/getCorsHeaders"
 import registerChatRoutes from "@routes/chat.route"
 import registerAuthRoutes from "@routes/auth.route"
 import registerContactRoutes from "@routes/contact.route"
+import registerSettingRoutes from "@routes/setting.route"
 import registerMessageRoutes from "./routes/message.route"
 import registerIntegrationRoutes from "@routes/integration.routes"
 
@@ -53,6 +54,7 @@ registerAuthRoutes(app)
 registerChatRoutes(app)
 registerMessageRoutes(app)
 registerContactRoutes(app)
+registerSettingRoutes(app)
 registerIntegrationRoutes(app)
 // register all routes
 
