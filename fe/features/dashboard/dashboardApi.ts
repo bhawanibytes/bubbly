@@ -1,26 +1,26 @@
 import { baseQuery } from "@baseApi";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import Response from "@shared/types/response.type";
+import { fetchAllChatsAndMessages } from "@shared/types/controllerResponse/messages.type";
 import {
-  sendDmResponseType,
-  SendMessageBodyType,
+    sendDmResponseType,
+    SendMessageBodyType,
 } from "@shared/types/messages.type";
 
 export const dashboardApi = createApi({
-  reducerPath: "dashboardApi", // optional: name in store
-  baseQuery: baseQuery,
-  endpoints: (builder) => ({
-    initialFetch: builder.query<Response, void>({
-      query: () => "/all-chat-message",
+    reducerPath: "dashboardApi", // optional: name in store
+    baseQuery: baseQuery,
+    endpoints: (builder) => ({
+        initialFetch: builder.query<fetchAllChatsAndMessages, void>({
+            query: () => "/all-chat-message",
+        }),
+        sendDm: builder.mutation<sendDmResponseType, SendMessageBodyType>({
+            query: (data) => ({
+                url: "/send-dm",
+                method: "POST",
+                body: data,
+            }),
+        }),
     }),
-    sendDm: builder.mutation<sendDmResponseType, SendMessageBodyType>({
-      query: (data) => ({
-        url: "/send-dm",
-        method: "POST",
-        body: data,
-      }),
-    }),
-  }),
 });
 
 export const { useInitialFetchQuery, useSendDmMutation } = dashboardApi;
