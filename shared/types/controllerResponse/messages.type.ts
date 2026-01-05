@@ -5,6 +5,7 @@ export interface fetchAllChatsAndMessages {
   data: {
     userId: string;
     userNumber: string;
+    contactIntergration: boolean;
     messageRecords: {
       id: string;
       createdAt: Date;

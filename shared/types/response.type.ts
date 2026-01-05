@@ -4,7 +4,7 @@ export default interface Response {
   status?: StatusCode;
   headers?: Record<string, string | string[]>;
   data?: any;
-  error?: Record<string, string>;
+  error?: any;
 }
 
 type StatusCode =
