@@ -72,3 +72,5 @@ app.listen(port, (token) => {
     logger.error(`Failed to listen to port ${port}`)
   }
 })
+
+export default app
