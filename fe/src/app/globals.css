@@ -4,39 +4,72 @@
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp");
 
 .material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px; /* Change size using Tailwind */
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  direction: ltr;
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px; /* Change size using Tailwind */
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
 
-  /* Support for CSS content */
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
+    /* Support for CSS content */
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
 }
 
 @import "tailwindcss";
 
 body {
-  font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
-  box-sizing: border-box;
+    font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+    box-sizing: border-box;
 }
 
 input {
-  outline: none;
+    outline: none;
 }
 
 /* Your CSS (e.g., global.css or inside <style> tag) */
 .custom-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+    display: none; /* Chrome, Safari */
 }
 
 .custom-scrollbar {
-  -ms-overflow-style: none;  /* IE & Edge */
-  scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none; /* IE & Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+@theme {
+    /* Brand Color */
+    --color-primary: var(--primary); /* Brand/accent => brand / CTA*/
+    --color-primary-foreground: var(
+        --primary-foreground
+    ); /* Text on primary => text on CTA */
+
+    /* Bg Colors */
+    --color-background: var(
+        --background-primary
+    ); /* App background => app shell */
+    --color-surface: var(
+        --background-secondary
+    ); /* Cards, panels => cards / sections */
+
+    /* Text Colors */
+    --color-foreground: var(
+        --text-primary
+    ); /* Primary text/icons => main text*/
+    --color-muted: var(--text-secondary); /* Secondary text => secondary text*/
+
+    /* Other Colors */
+    --color-destructive: var(--destructive); /* Errors, danger */
+    --color-border: var(--border); /* Borders, dividers */
+}
+
+:root {
+    --background-primary: #1d1f1f;
+    --background-secondary: #262524;
+    --text-primary: #fff;
+    --text-secondary: #97a1af;
 }
