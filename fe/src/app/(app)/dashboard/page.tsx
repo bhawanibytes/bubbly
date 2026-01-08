@@ -74,6 +74,7 @@ export default function Dashboard() {
 
     return (
         <div className="flex h-screen w-screen text-black">
+            
             {/* Left Chat Section */}
             <ChatTilesSection
                 dashboardState={dashboardState}

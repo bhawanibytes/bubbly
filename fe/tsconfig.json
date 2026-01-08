@@ -20,12 +20,12 @@
             }
         ],
         "paths": {
-            "@components/*": ["./components/*"],
-            "@utils/*": ["./utils/*"],
+            "@components/*": ["./src/components/*"],
+            "@utils/*": ["./src/utils/*"],
             "@shared/*": ["../shared/*"],
-            "@features/*": ["./features/*"],
-            "@baseApi": ["./lib/api"],
-            "@/*": ["./*"]
+            "@features/*": ["./src/features/*"],
+            "@baseApi": ["./src/lib/api"],
+            "@/*": ["./src/*"]
         }
     },
     "include": [
