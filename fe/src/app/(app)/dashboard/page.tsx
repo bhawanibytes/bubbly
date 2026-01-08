@@ -10,8 +10,9 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ChatWindow from "@components/ChatWindow";
-import ChatTilesSection from "@components/ChatTilesSection";
 import Button from "@components/Button";
+import { VerticalNavMenu } from "@sections/VerticalNavMenu";
+import { MenuContent } from "@sections/MenuContent";
 
 export default function Dashboard() {
     const dispatch = useDispatch();
@@ -74,25 +75,23 @@ export default function Dashboard() {
 
     return (
         <div className="flex h-screen w-screen text-black">
-            
+            <VerticalNavMenu />
+
             {/* Left Chat Section */}
-            <ChatTilesSection
-                dashboardState={dashboardState}
-                contactIntegration={contactIntegration}
-            />
+            <MenuContent />
             {/* Section's Vertical Divider */}
-            {/* <div className="h-full w-0 bg-amber-200"></div> */}
+            <div className="bg-background/90 h-full w-0.5"></div>
             {/* Right Side Chat Window Section*/}
             {contactIntegration ? (
                 selectedChat ? (
                     <ChatWindow messageArr={selectedChatMessage} />
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gray-300 text-gray-400">
+                    <div className="bg-background text-muted flex h-full w-full items-center justify-center">
                         Select a chat to view messages
                     </div>
                 )
             ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center bg-gray-300 text-gray-400">
+                <div className="bg-background text-muted flex h-full w-full flex-col items-center justify-center">
                     You do not have any contacts please import your contact
                     using a google account
                     {/* please integrate your contacts using your google account */}

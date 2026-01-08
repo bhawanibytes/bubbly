@@ -4,12 +4,14 @@ import {
     MessageTableInsert,
     MessageTableSelect,
 } from "@shared/types/messages.type";
+import type { VerticleMenu } from "@sections/VerticalNavMenu";
 
 export interface StateMessageType extends MessageTableSelect {
     senderOfThisMessage: { phoneNumber: string };
 }
 
 export interface DashboardStateType {
+    ActiveMenu: VerticleMenu;
     dashboardState: fetchAllChatsAndMessagesResponse[] | [];
     selectedChat: string;
     draftMessage: string;
@@ -17,6 +19,7 @@ export interface DashboardStateType {
     contactIntegration: boolean;
 }
 const initialState: DashboardStateType = {
+    ActiveMenu: "chat",
     dashboardState: [],
     selectedChat: "",
     draftMessage: "",
@@ -91,6 +94,13 @@ export const dashboardSlice = createSlice({
             const { contactRecord } = action.payload;
             state.contacts = contactRecord;
         },
+        setActiveMenu: (
+            state,
+            action: PayloadAction<{ selectedMenu: VerticleMenu }>
+        ) => {
+            const { selectedMenu } = action.payload;
+            state.ActiveMenu = selectedMenu;
+        },
     },
 });
 
@@ -102,5 +112,6 @@ export const {
     updateMessageInState,
     updateContactIntegration,
     setContacts,
+    setActiveMenu,
 } = dashboardSlice.actions;
 export default dashboardSlice.reducer;
