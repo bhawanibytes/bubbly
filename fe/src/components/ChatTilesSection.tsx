@@ -11,10 +11,8 @@ function ChatTilesSection({
     contactIntegration: ContactIntegrationType;
 }) {
     return (
-        <div
-            className={`flex h-full ${contactIntegration ? "w-[20%]" : "w-0"} flex-col bg-amber-400`}
-        >
-            <div className="shrink-0 px-4 py-3 text-lg font-semibold">
+        <>
+            <div className="text-foreground shrink-0 px-4 py-3 text-lg font-semibold">
                 Chats
             </div>
 
@@ -28,7 +26,7 @@ function ChatTilesSection({
                     />
                 ))}
             </div>
-        </div>
+        </>
     );
 }
 
