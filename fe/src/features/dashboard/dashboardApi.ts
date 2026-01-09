@@ -20,6 +20,15 @@ export const dashboardApi = createApi({
                 body: data,
             }),
         }),
+
+        //  Todo here
+        fetch: builder.mutation<sendDmResponseType, SendMessageBodyType>({
+            query: (data) => ({
+                url: "/send-dm",
+                method: "POST",
+                body: data,
+            }),
+        }),
     }),
 });
 

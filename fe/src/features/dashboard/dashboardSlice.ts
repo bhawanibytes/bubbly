@@ -18,6 +18,7 @@ export interface DashboardStateType {
     contacts: Record<string, string> | null;
     contactIntegration: boolean;
     searchActive: boolean;
+    activeContact: string;
 }
 const initialState: DashboardStateType = {
     ActiveMenu: "chat",
@@ -27,6 +28,7 @@ const initialState: DashboardStateType = {
     contacts: {},
     contactIntegration: false,
     searchActive: false,
+    activeContact: "",
 };
 
 export const dashboardSlice = createSlice({
@@ -112,6 +114,15 @@ export const dashboardSlice = createSlice({
             const { search } = action.payload;
             state.searchActive = search;
         },
+        setActiveContact: (
+            state,
+            action: PayloadAction<{
+                phoneNumber: string;
+            }>
+        ) => {
+            const { phoneNumber } = action.payload;
+            state.activeContact = phoneNumber;
+        },
     },
 });
 
@@ -125,5 +136,6 @@ export const {
     setContacts,
     setActiveMenu,
     setSearchStatus,
+    setActiveContact,
 } = dashboardSlice.actions;
 export default dashboardSlice.reducer;
