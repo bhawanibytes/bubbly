@@ -71,17 +71,20 @@ export async function fetchAllChatsAndMessages(
             },
         })
 
-        let contactRecords: Record<
-            "contactMap" | "availabilityMap",
-            Record<string, string>
-        > = {
+        interface contactRecords {
+            contactMap: Record<string, string>
+            availabilityMap: Record<string, boolean>
+        }
+
+        let contactRecords: contactRecords = {
             contactMap: {},
             availabilityMap: {},
         }
 
         contactRecordsArray.forEach((c) => {
-            contactRecords.contactMap[c.contactName] = c.contactNumber
-            contactRecords.availabilityMap[c.contactName] = c.contactNumber
+            contactRecords.contactMap[c.contactNumber] = c.contactName
+            contactRecords.availabilityMap[c.contactNumber] =
+                c.availableOnPlatform
         })
 
         const googleTokens = await tx.query.users.findFirst({

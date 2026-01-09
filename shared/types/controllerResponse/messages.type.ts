@@ -1,3 +1,7 @@
+interface contactRecords {
+  contactMap: Record<string, string>;
+  availabilityMap: Record<string, boolean>;
+}
 export interface fetchAllChatsAndMessages {
   success: boolean;
   status: string;
@@ -38,9 +42,6 @@ export interface fetchAllChatsAndMessages {
         senderOfThisMessage: { phoneNumber: string };
       }[];
     }[];
-    contactRecords: Record<
-      "contactMap" | "availabilityMap",
-      Record<string, string>
-    >;
+    contactRecords: contactRecords;
   };
 }
