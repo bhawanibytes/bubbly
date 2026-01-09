@@ -49,9 +49,10 @@ function ChatSection({
                         </div>
                         {Object.entries(ContactMap).map(([key, value]) => (
                             <ContactTiles
-                                contactName={key}
+                                contactName={value}
                                 message={"Hey there, I am using Bubbly"}
-                                key={value}
+                                key={key}
+                                phoneNumber={key}
                             />
                         ))}
                     </>
