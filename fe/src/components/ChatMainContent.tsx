@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import ChatWindow from "./ChatWindow";
 import Button from "./Button";
+import { ContactIsNotOnBubbly } from "./ContactIsNotOnBubbly";
 
 export const ChatMainContent = () => {
     const contactIntegration = useSelector(
@@ -13,6 +14,9 @@ export const ChatMainContent = () => {
     );
     const dashboardState = useSelector(
         (state: RootState) => state.dashboard.dashboardState
+    );
+    const activeContact = useSelector(
+        (state: RootState) => state.dashboard.activeContact
     );
     const selectedChatMessage = useMemo(() => {
         console.log("🔍 Selected Chat ID:", selectedChat);
@@ -32,12 +36,17 @@ export const ChatMainContent = () => {
     return contactIntegration ? (
         selectedChat ? (
             <ChatWindow messageArr={selectedChatMessage} />
+        ) : activeContact.length ? (
+            // if contact integration there but no chat is selected and some contact selected
+            <ContactIsNotOnBubbly />
         ) : (
+            // if contact integration there but no chat is selected and some contact selected
             <div className="bg-background text-muted flex h-full w-full items-center justify-center">
                 Select a chat to view messages
             </div>
         )
     ) : (
+        // if no contact integration is there
         <div className="bg-background text-muted flex h-full w-full flex-col items-center justify-center">
             You do not have any contacts please import your contact using a
             google account
