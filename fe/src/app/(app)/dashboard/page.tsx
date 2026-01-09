@@ -6,26 +6,15 @@ import {
     setDashboardState,
     updateContactIntegration,
 } from "@features/dashboard/dashboardSlice";
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import ChatWindow from "@components/ChatWindow";
-import Button from "@components/Button";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { VerticalNavMenu } from "@sections/VerticalNavMenu";
 import { MenuContent } from "@sections/MenuContent";
+import { MainContent } from "@sections/MainContent";
 
 export default function Dashboard() {
     const dispatch = useDispatch();
     const { data, isLoading, error } = useInitialFetchQuery();
-    const dashboardState = useSelector(
-        (state: RootState) => state.dashboard.dashboardState
-    );
-    const contactIntegration = useSelector(
-        (state: RootState) => state.dashboard.contactIntegration
-    );
-    const selectedChat = useSelector(
-        (state: RootState) => state.dashboard.selectedChat
-    );
     // Update the dashboard state when data is fetched
     useEffect(() => {
         if (data) {
@@ -47,26 +36,27 @@ export default function Dashboard() {
                     contactRecord: data.data.contactRecords.contactMap,
                 })
             );
+            // console.log("contactMap: ", data.data.contactRecords.contactMap)
         }
     }, [data, dispatch]);
 
-    const selectedChatMessage = useMemo(() => {
-        console.log("🔍 Selected Chat ID:", selectedChat);
-        console.log("📦 Dashboard State:", dashboardState);
-
-        if (!selectedChat) {
-            console.log("⚠️ No chat selected");
-            return [];
-        }
-
-        const chat = dashboardState.find((obj) => obj.id === selectedChat);
-        console.log("💬 Found Chat:", chat);
-        console.log("📨 Messages:", chat?.allMessagesOfThisChat);
-
-        return chat?.allMessagesOfThisChat || [];
-    }, [dashboardState, selectedChat]);
     // Loading While Fetching Data
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="bg-surface flex h-screen items-center justify-center space-x-2">
+                <div className="relative h-16 w-16">
+                    <div className="absolute inset-0 animate-spin rounded-full border-4 border-gray-600 border-t-orange-500"></div>
+                    <div
+                        className="absolute inset-2 animate-spin rounded-full border-4 border-gray-700 border-t-amber-400"
+                        style={{
+                            animationDirection: "reverse",
+                            animationDuration: "0.75s",
+                        }}
+                    ></div>
+                </div>
+            </div>
+        );
+    }
     // Error Handling While Fetching Data
     if (error) {
         console.error("Error:", error); // Debug log
@@ -82,28 +72,7 @@ export default function Dashboard() {
             {/* Section's Vertical Divider */}
             <div className="bg-background/90 h-full w-0.5"></div>
             {/* Right Side Chat Window Section*/}
-            {contactIntegration ? (
-                selectedChat ? (
-                    <ChatWindow messageArr={selectedChatMessage} />
-                ) : (
-                    <div className="bg-background text-muted flex h-full w-full items-center justify-center">
-                        Select a chat to view messages
-                    </div>
-                )
-            ) : (
-                <div className="bg-background text-muted flex h-full w-full flex-col items-center justify-center">
-                    You do not have any contacts please import your contact
-                    using a google account
-                    {/* please integrate your contacts using your google account */}
-                    <Button
-                        className={`mt-5 w-fit rounded-lg px-4 py-0 text-base font-normal`}
-                        href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/google/auth`}
-                    >
-                        {" "}
-                        Import Contacts{" "}
-                    </Button>
-                </div>
-            )}
+            <MainContent />
         </div>
     );
 }
