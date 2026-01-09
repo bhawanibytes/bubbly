@@ -1,5 +1,5 @@
 import { RootState } from "@/redux/store";
-import ChatTilesSection from "@components/ChatTilesSection";
+import ChatSection from "@components/ChatSection";
 import { Settings } from "@components/Settings";
 import { useSelector } from "react-redux";
 
@@ -10,17 +10,13 @@ export const MenuContent = () => {
     const dashboardState = useSelector(
         (state: RootState) => state.dashboard.dashboardState
     );
-    const contactIntegration = useSelector(
-        (state: RootState) => state.dashboard.contactIntegration
-    );
 
     return (
-        <div className={`bg-background flex h-full w-[20%] min-w-50 flex-col`}>
+        <div
+            className={`bg-background text-foreground flex h-full w-[45%] min-w-50 flex-col px-4 py-3`}
+        >
             {selectedMenu === "chat" ? (
-                <ChatTilesSection
-                    dashboardState={dashboardState}
-                    contactIntegration={contactIntegration}
-                />
+                <ChatSection dashboardState={dashboardState} />
             ) : (
                 <></>
             )}
