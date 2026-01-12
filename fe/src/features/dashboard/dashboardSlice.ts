@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-    fetchAllChatsAndMessagesResponse,
     MessageTableInsert,
     MessageTableSelect,
 } from "@shared/types/messages.type";
 import type { VerticleMenu } from "@sections/VerticalNavMenu";
+import { fetchAllChatsAndMessages } from "@shared/types/controllerResponse/messages.type";
 
 export interface StateMessageType extends MessageTableSelect {
     senderOfThisMessage: { phoneNumber: string };
@@ -12,7 +12,7 @@ export interface StateMessageType extends MessageTableSelect {
 
 export interface DashboardStateType {
     ActiveMenu: VerticleMenu;
-    dashboardState: fetchAllChatsAndMessagesResponse[] | [];
+    dashboardState: fetchAllChatsAndMessages["data"]["messageRecords"] | [];
     selectedChat: string;
     draftMessage: string;
     contacts: Record<string, string> | null;
@@ -20,6 +20,7 @@ export interface DashboardStateType {
     searchActive: boolean;
     activeContact: string;
 }
+
 const initialState: DashboardStateType = {
     ActiveMenu: "chat",
     dashboardState: [],
