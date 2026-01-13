@@ -35,13 +35,22 @@ function ChatSection({
             <div className="custom-scrollbar flex flex-1 flex-col gap-2 overflow-y-auto pb-2">
                 {dashboardState.map((chatObj) => (
                     <ChatTiles
-                        chatDisplayName={`${chatObj.isGroup ? chatObj.groupName : chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber}`}
-                        lastMessage={chatObj.allMessagesOfThisChat[0].content}
+                        chatDisplayName={`${chatObj.isGroup ? chatObj.groupName : ContactMap ? ContactMap[chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber] : chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber}`}
+                        lastMessage={`${chatObj.allMessagesOfThisChat[0] ? chatObj.allMessagesOfThisChat[0].content : "Hey there, I am using Bubbly"}`}
                         key={chatObj?.id}
                         chatId={chatObj.id}
+                        phoneNumber={
+                            chatObj.isGroup
+                                ? ""
+                                : chatObj.membersOfThisChat[0]
+                                      .userToWhichThisMembershipBelongTo
+                                      .phoneNumber
+                        }
                     />
                 ))}
-                {!dashboardState.length && ContactMap ? (
+                {!dashboardState.length &&
+                ContactMap &&
+                Object.keys(ContactMap).length ? (
                     <>
                         <div className="text-muted italic">
                             You have no chats, Talk or Invite Your Contacts to
