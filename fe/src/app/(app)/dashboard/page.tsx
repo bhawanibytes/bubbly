@@ -3,9 +3,9 @@
 import { useInitialFetchQuery } from "@features/dashboard/dashboardApi";
 import {
     setContacts,
-    setDashboardState,
     updateContactIntegration,
 } from "@features/dashboard/dashboardSlice";
+import { setChatList } from "@features/chats/chatSlice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { VerticalNavMenu } from "@sections/VerticalNavMenu";
@@ -18,9 +18,7 @@ export default function Dashboard() {
     // Update the dashboard state when data is fetched
     useEffect(() => {
         if (data) {
-            dispatch(
-                setDashboardState({ dashboardState: data.data.messageRecords })
-            );
+            dispatch(setChatList({ chatList: data.data.chatList }));
             dispatch(
                 updateContactIntegration({
                     contactIntegrationStatus: data.data.contactIntergration,
