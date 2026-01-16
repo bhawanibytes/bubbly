@@ -25,11 +25,11 @@ export async function googleAuth(res: UWSRes, req: UWSReq): Promise<Response> {
 
     const state = randomBytes(16).toString("hex")
     logger.info({ state })
-    const userPhoneNumber = res.user.number
-    logger.info({ userPhoneNumber })
+    const userId = res.user.id
+    logger.info({ userId })
 
     try {
-        await cache.set(`GoogleState:${state}justnow`, userPhoneNumber, {
+        await cache.set(`GoogleState:${state}justnow`, userId, {
             expiration: { type: "EX", value: 300 },
         })
     } catch (error) {
@@ -71,9 +71,9 @@ export async function googleCallback(
     // 1. Validate state
     const cookie = req.getHeader("cookie") || ""
     //
-    const userPhoneNumber = await cache.get(`GoogleState:${state}justnow`)
+    const userId = await cache.get(`GoogleState:${state}justnow`)
 
-    if (!code || !state || !userPhoneNumber) {
+    if (!code || !state || !userId) {
         return {
             status: "400 Bad Request",
             message: "Param is missing",
@@ -81,7 +81,7 @@ export async function googleCallback(
             data: {
                 code,
                 state,
-                userPhoneNumber,
+                userId,
             },
         }
     }
@@ -109,13 +109,14 @@ export async function googleCallback(
                     googleAccessExpiry: payload.expiry_date,
                     googleRefreshToken: payload.refresh_token,
                 })
-                .where(eq(users.phoneNumber, userPhoneNumber))
+                .where(eq(users.id, userId))
                 .returning({ id: users.id })
 
             // fetch contactsRecords
             const contactRecord = await listConnection({
                 access_token: payload.access_token!,
                 refresh_token: payload.refresh_token!,
+                userId,
             })
 
             // make an array of phone numbers

@@ -2,8 +2,8 @@ import { db } from "@db/db"
 import { UWSReq, UWSRes } from "@/types/type.uws"
 import {
     fetchMessagesBody,
-    SendMessageBodyType,
-} from "@shared/types/messages.type"
+    SendMessageBody,
+} from "@shared/types/body/message.type"
 import { and, eq, inArray, ne } from "drizzle-orm"
 import Response from "@shared/types/response.type"
 import { chats } from "@db/schema/chats"
@@ -20,106 +20,125 @@ export async function fetchAllChatsAndMessages(
     res: UWSRes,
     req: UWSReq,
 ): Promise<Response> {
-    // Todo Fetch all chats, Messages, Contacts of this user
     const userId: string = res.user.id
-    const userNumber: string = res.user.number
-    // find all chatIds of which this user is a member
-    const allChats = await db.query.chatMembers.findMany({
-        where: eq(chatMembers.userId, userId),
-        columns: {
-            chatId: true,
-        },
-        orderBy: (chatMembers, { desc }) => [desc(chatMembers.createdAt)],
-    })
-    const arrOfChat = allChats.map((chatObj) => chatObj.chatId)
+    try {
+        // find all chatIds of which this user is a member
+        const allChats = await db.query.chatMembers.findMany({
+            where: eq(chatMembers.userId, userId),
+            columns: {
+                chatId: true,
+            },
+            orderBy: (chatMembers, { desc }) => [desc(chatMembers.createdAt)],
+        })
 
-    const dbQuery = await db.transaction(async (tx) => {
-        const messageRecords = await tx.query.chats.findMany({
-            where: inArray(chats.id, arrOfChat),
-            with: {
-                allMessagesOfThisChat: {
-                    with: {
-                        senderOfThisMessage: {
-                            columns: {
-                                phoneNumber: true,
+        const arrOfChat = allChats.map((chatObj) => chatObj.chatId)
+
+        const dbQuery = await db.transaction(async (tx) => {
+            const messageRecords = await tx.query.chats.findMany({
+                where: inArray(chats.id, arrOfChat),
+                with: {
+                    allMessagesOfThisChat: {
+                        with: {
+                            senderOfThisMessage: {
+                                columns: {
+                                    phoneNumber: true,
+                                },
+                            },
+                        },
+                        orderBy: (messages, { asc }) => [
+                            asc(messages.createdAt),
+                        ],
+                    },
+                    membersOfThisChat: {
+                        where: ne(chatMembers.userId, userId),
+                        with: {
+                            userToWhichThisMembershipBelongTo: {
+                                columns: {
+                                    phoneNumber: true,
+                                },
                             },
                         },
                     },
-                    orderBy: (messages, { asc }) => [asc(messages.createdAt)],
                 },
-                membersOfThisChat: {
-                    where: ne(chatMembers.userId, userId),
-                    with: {
-                        userToWhichThisMembershipBelongTo: {
-                            columns: {
-                                phoneNumber: true,
-                            },
-                        },
-                    },
+                orderBy: (chats, { desc }) => [
+                    desc(chats.lastMessageTimestamp),
+                ],
+            })
+
+            // fetch Contacts in a Array
+            const contactRecordsArray = await tx.query.contacts.findMany({
+                where: eq(contacts.userId, userId),
+                columns: {
+                    contactName: true,
+                    contactNumber: true,
+                    availableOnPlatform: true,
                 },
-            },
-            orderBy: (chats, { desc }) => [desc(chats.lastMessageTimestamp)],
-        })
+            })
 
-        // fetch Contacts in a Array
-        const contactRecordsArray = await tx.query.contacts.findMany({
-            where: eq(contacts.userId, userId),
-            columns: {
-                contactName: true,
-                contactNumber: true,
-                availableOnPlatform: true,
-            },
-        })
+            interface contactRecords {
+                contactMap: Record<string, string>
+                availabilityMap: Record<string, boolean>
+            }
 
-        interface contactRecords {
-            contactMap: Record<string, string>
-            availabilityMap: Record<string, boolean>
-        }
+            let contactRecords: contactRecords = {
+                contactMap: {},
+                availabilityMap: {},
+            }
 
-        let contactRecords: contactRecords = {
-            contactMap: {},
-            availabilityMap: {},
-        }
+            contactRecordsArray.forEach((c) => {
+                contactRecords.contactMap[c.contactNumber] = c.contactName
+                contactRecords.availabilityMap[c.contactNumber] =
+                    c.availableOnPlatform
+            })
 
-        contactRecordsArray.forEach((c) => {
-            contactRecords.contactMap[c.contactNumber] = c.contactName
-            contactRecords.availabilityMap[c.contactNumber] =
-                c.availableOnPlatform
-        })
+            const userDetails = await tx.query.users.findFirst({
+                where: eq(users.id, userId),
+                columns: {
+                    googleAccessToken: true,
+                    googleRefreshToken: true,
+                    phoneNumber: true,
+                },
+            })
 
-        const googleTokens = await tx.query.users.findFirst({
-            where: eq(users.phoneNumber, userNumber),
-            columns: {
-                googleAccessToken: true,
-                googleRefreshToken: true,
-            },
-        })
-
-        if (
-            !googleTokens ||
-            !googleTokens.googleAccessToken ||
-            !googleTokens.googleRefreshToken
-        ) {
+            if (
+                !userDetails ||
+                !userDetails.googleAccessToken ||
+                !userDetails.googleRefreshToken
+            ) {
+                return {
+                    messageRecords,
+                    contactRecords,
+                    contactIntergration: false,
+                    phoneNumber: userDetails?.phoneNumber,
+                }
+            }
             return {
                 messageRecords,
                 contactRecords,
-                contactIntergration: false,
+                contactIntergration: true,
+                phoneNumber: userDetails.phoneNumber,
             }
-        }
-        return { messageRecords, contactRecords, contactIntergration: true }
-    })
+        })
 
-    return {
-        success: true,
-        status: "200 OK",
-        message: "Here is your all messages of this chat and contacts",
-        data: {
-            userId,
-            userNumber,
-            contactIntergration: dbQuery.contactIntergration,
-            messageRecords: dbQuery.messageRecords,
-            contactRecords: dbQuery.contactRecords,
-        },
+        return {
+            success: true,
+            status: "200 OK",
+            message: "Here is your all messages of this chat and contacts",
+            data: {
+                userId,
+                userNumber: dbQuery.phoneNumber,
+                contactIntergration: dbQuery.contactIntergration,
+                chatList: dbQuery.messageRecords,
+                contactRecords: dbQuery.contactRecords,
+            },
+        }
+    } catch (error) {
+        logger.error(`handler crashed with the error:`, error)
+        return {
+            success: false,
+            status: "500 Internal Server Error",
+            message: "Something Went Wrong",
+        }
     }
 }
 
@@ -127,7 +146,7 @@ export async function fetchAllChatsAndMessages(
 export async function sendDM(
     res: UWSRes,
     req: UWSReq,
-    body: SendMessageBodyType,
+    body: SendMessageBody,
 ): Promise<Response> {
     const senderId = res.user.id
     // logger.info(`user from middleware in sendDm controller`, res.user)
@@ -241,6 +260,7 @@ export async function fetchMessages(
         // data: chatMessages,
     }
 }
+
 // editMessage
 
 // deleteMessage (soft delete for sender, hard delete for admins)
