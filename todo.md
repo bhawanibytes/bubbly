@@ -1,7 +1,11 @@
 ## Enter Number Send Message
 
-- create dm chat controller + API + Types => done
-- send dm message controller + API + Types => done
-- fetch all/few chat of one user + API + Types + frontend handling => halfBaked
-- fetch all/few message of one chat in time sorted format + API + Types + frontend handling => halfBaked
-- message dashboard
+- search functionality for chat and contacts (decide db based of local state based)
+- setting page => 
+    - show contact integration details
+    - show profile details
+- fix it for google api warning
+- add profile pic
+- rate limit all endpoint
+- do input validation with zod
+- Manage Db Versioning Dev and Production Saparately
