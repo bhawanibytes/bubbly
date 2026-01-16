@@ -16,7 +16,7 @@ import {
     ForgetPinBody,
     VerifyForgetPinBody,
     SetPinBody,
-} from "@shared/types/auth.type"
+} from "@shared/types/body/auth.type"
 import logger from "@/configs/logger.config"
 
 //  logout (invalidate tokens, clear sessions)
@@ -199,6 +199,7 @@ export async function login(
             .select()
             .from(users)
             .where(eq(users.phoneNumber, number))
+        console.log("first:", user)
 
         //return if user don't exists or is not verified
         if (!user?.isVerified) {
@@ -228,7 +229,6 @@ export async function login(
             const accessToken = jwt.sign(
                 {
                     id: user.id,
-                    number: user.phoneNumber,
                 },
                 env.JWT_SECRET,
                 {
@@ -238,7 +238,6 @@ export async function login(
             const refreshToken = jwt.sign(
                 {
                     id: user.id,
-                    number: user.phoneNumber,
                 },
                 env.JWT_SECRET,
                 {
