@@ -2,6 +2,29 @@ interface contactRecords {
   contactMap: Record<string, string>;
   availabilityMap: Record<string, boolean>;
 }
+
+export type MessageTableSelect = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  chatId: string;
+  senderId: string;
+  content: string;
+  messageType: "text" | "image" | "video" | "voice" | "doc";
+  replyTo: string | null;
+};
+
+export type MessageTableInsert = {
+  chatId: string;
+  senderId: string;
+  content: string;
+  messageType: "text" | "image" | "video" | "voice" | "doc";
+  id?: string | undefined;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  replyTo?: string | null | undefined;
+};
+
 export interface fetchAllChatsAndMessages {
   success: boolean;
   status: string;
@@ -10,7 +33,7 @@ export interface fetchAllChatsAndMessages {
     userId: string;
     userNumber: string;
     contactIntergration: boolean;
-    messageRecords: {
+    chatList: {
       id: string;
       createdAt: Date;
       updatedAt: Date;
@@ -43,5 +66,21 @@ export interface fetchAllChatsAndMessages {
       }[];
     }[];
     contactRecords: contactRecords;
+  };
+}
+// x DocumentFragment()
+export interface SendDmResponse {
+  success: boolean;
+  status: string;
+  message: string;
+  data: {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    chatId: string;
+    senderId: string;
+    content: string;
+    messageType: "text" | "image" | "video" | "voice" | "doc";
+    replyTo: string | null;
   };
 }
