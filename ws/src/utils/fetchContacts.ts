@@ -4,16 +4,16 @@ import { peopleApiEndpoint } from "./googleApiClient"
 export interface ListConnectionParam {
     access_token: string
     refresh_token: string
-    userNumber: string
+    userId: string
 }
 
 export async function listConnection({
     access_token,
     refresh_token,
-    userNumber
+    userId,
 }: ListConnectionParam) {
     // attached Configs to People Api Endpoint
-    const people = peopleApiEndpoint(access_token, refresh_token, userNumber)
+    const people = peopleApiEndpoint(access_token, refresh_token, userId)
 
     try {
         // 4. Fetch connections

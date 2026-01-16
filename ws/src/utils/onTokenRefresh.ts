@@ -5,13 +5,13 @@ import { eq } from "drizzle-orm"
 export async function onTokenRefresh({
     access_token,
     refresh_token,
-    userNumber,
+    userId,
 }: {
     access_token: string
     refresh_token: string
-    userNumber: string
+    userId: string
 }) {
-    if (userNumber || access_token || refresh_token) {
+    if (userId || access_token || refresh_token) {
         throw new Error("All param need for saving refreshed token")
     }
     try {
@@ -21,7 +21,7 @@ export async function onTokenRefresh({
                 googleAccessToken: access_token,
                 googleRefreshToken: refresh_token,
             })
-            .where(eq(users.phoneNumber, userNumber))
+            .where(eq(users.id, userId))
     } catch (error) {
         throw new Error(`${error}`)
     }
