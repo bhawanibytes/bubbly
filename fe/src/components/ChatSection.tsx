@@ -1,19 +1,13 @@
-import { DashboardStateType } from "@features/dashboard/dashboardSlice";
 import ChatTiles from "@components/ChatTiles";
-import ContactTiles from "./ContactTiles";
 import { Search } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-type LocalDashboardStateType = DashboardStateType["dashboardState"];
 
-function ChatSection({
-    dashboardState,
-}: {
-    dashboardState: LocalDashboardStateType;
-}) {
+function ChatSection() {
     const ContactMap = useSelector(
         (state: RootState) => state.dashboard.contacts
     );
+    const chatList = useSelector((state: RootState) => state.chat.chatList);
     return (
         <>
             <div className="text-foreground mb-2 shrink-0 text-lg font-medium">
@@ -31,9 +25,11 @@ function ChatSection({
                     onChange={() => {}}
                 />
             </div>
+
             <div className="bg-surface mb-2 h-0.5 w-full" />
+
             <div className="custom-scrollbar flex flex-1 flex-col gap-2 overflow-y-auto pb-2">
-                {dashboardState.map((chatObj) => (
+                {chatList.map((chatObj) => (
                     <ChatTiles
                         chatDisplayName={`${chatObj.isGroup ? chatObj.groupName : ContactMap ? ContactMap[chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber] : chatObj?.membersOfThisChat[0].userToWhichThisMembershipBelongTo.phoneNumber}`}
                         lastMessage={`${chatObj.allMessagesOfThisChat[0] ? chatObj.allMessagesOfThisChat[0].content : "Hey there, I am using Bubbly"}`}
@@ -42,13 +38,13 @@ function ChatSection({
                         phoneNumber={
                             chatObj.isGroup
                                 ? ""
-                                : chatObj.membersOfThisChat[0]
+                                : chatObj.membersOfThisChat[0] // Todo : here we are just picking first membership, we should pick the membership that don't has contactnumber same as the user who is logged in the bubbly
                                       .userToWhichThisMembershipBelongTo
                                       .phoneNumber
                         }
                     />
                 ))}
-                {!dashboardState.length &&
+                {!chatList.length &&
                 ContactMap &&
                 Object.keys(ContactMap).length ? (
                     <>
@@ -57,11 +53,12 @@ function ChatSection({
                             Bubbly
                         </div>
                         {Object.entries(ContactMap).map(([key, value]) => (
-                            <ContactTiles
-                                contactName={value}
-                                message={"Hey there, I am using Bubbly"}
+                            <ChatTiles
+                                chatDisplayName={value}
+                                lastMessage={"Hey there, I am using bubbly"}
                                 key={key}
                                 phoneNumber={key}
+                                chatId={""}
                             />
                         ))}
                     </>
