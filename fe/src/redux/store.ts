@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "@features/auth/authSlice";
 import { authApi } from "@features/auth/authApi";
+import authReducer from "@features/auth/authSlice";
 import { dashboardApi } from "@features/dashboard/dashboardApi";
 import dashboardReducer from "@features/dashboard/dashboardSlice";
 import chatReducer from "@features/chats/chatSlice";
+import { chatApi } from "@features/chats/chatApi";
 
 export const store = configureStore({
     reducer: {
@@ -12,11 +13,13 @@ export const store = configureStore({
         dashboard: dashboardReducer,
         [dashboardApi.reducerPath]: dashboardApi.reducer,
         chat: chatReducer,
+        [chatApi.reducerPath]: chatApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(authApi.middleware)
-            .concat(dashboardApi.middleware),
+            .concat(dashboardApi.middleware)
+            .concat(chatApi.middleware),
 });
 
 // Infer the type of makeStore
