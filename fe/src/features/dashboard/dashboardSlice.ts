@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MessageTableSelect } from "@shared/types/messages.type";
+import { MessageTableSelect } from "@shared/types/response/messages.type";
 import type { VerticleMenu } from "@sections/VerticalNavMenu";
 
 export interface StateMessageType extends MessageTableSelect {

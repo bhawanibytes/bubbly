@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
     MessageTableInsert,
     MessageTableSelect,
-} from "@shared/types/messages.type";
-import { fetchAllChatsAndMessages } from "@shared/types/controllerResponse/messages.type";
+    fetchAllChatsAndMessages,
+} from "@shared/types/response/messages.type";
 
 export interface StateMessageType extends MessageTableSelect {
     senderOfThisMessage: { phoneNumber: string };
@@ -25,18 +25,50 @@ export const chatSlice = createSlice({
     name: "chats",
     initialState,
     reducers: {
-        setChatList: (state, action) => {
+        // set whole chatList usally on Reloads
+        setChatList: (
+            state,
+            action: PayloadAction<{
+                chatList: chatStateInterface["chatList"];
+            }>
+        ) => {
             const { chatList } = action.payload;
             state.chatList = chatList;
         },
-        setSelectedChat: (state, action) => {
+        // add new chat to chatList in the end
+        addNewChat: (
+            state,
+            action: PayloadAction<{
+                newchat: chatStateInterface["chatList"][0];
+            }>
+        ) => {
+            const { newchat } = action.payload;
+            state.chatList.push(newchat);
+        },
+
+        // select active chat's chatId as Selected Chat
+        setSelectedChat: (
+            state,
+            action: PayloadAction<{
+                chatId: chatStateInterface["chatList"][0]["id"];
+            }>
+        ) => {
             const { chatId } = action.payload;
             state.selectedChatId = chatId;
         },
-        setDraftMessage: (state, action) => {
+
+        // set Draft Message to State
+        setDraftMessage: (
+            state,
+            action: PayloadAction<{
+                draftMessage: string;
+            }>
+        ) => {
             const { draftMessage } = action.payload;
             state.draftMessage = draftMessage;
         },
+
+        // add sent or recieved message to an specifc Chat that available in ChatList by filtering using a given chatId
         addMessageToState: (
             state,
             action: PayloadAction<{
@@ -52,6 +84,7 @@ export const chatSlice = createSlice({
             //@ts-expect-error ...
             messageArr?.push(messageObj);
         },
+
         // Replace temporary message with real DB message
         updateMessageInState: (
             state,
@@ -79,6 +112,7 @@ export const {
     setDraftMessage,
     addMessageToState,
     updateMessageInState,
+    addNewChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
