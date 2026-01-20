@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DigitsInput from "./DigitsInput";
 import Button from "./Button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { VerifySignupBody } from "@shared/types/auth.type";
+import { VerifySignupBody } from "@shared/types/body/auth.type";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { verifyFormData } from "@/features/auth/authSlice";
