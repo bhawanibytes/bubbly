@@ -1,31 +1,37 @@
-import { setSelectedChat } from "@/features/dashboard/dashboardSlice";
-import { useDispatch } from "react-redux";
-
+import { setActiveContact } from "@/features/dashboard/dashboardSlice";
+import { RootState } from "@/redux/store";
+import { setSelectedChat } from "@features/chats/chatSlice";
+import { useDispatch, useSelector } from "react-redux";
 export interface ChatTilesType {
     chatDisplayName: string;
     lastMessage: string | null;
     chatId: string;
-    // dp: string | URL;
+    phoneNumber: string;
 }
 
 export default function ChatTiles({
     chatDisplayName,
     lastMessage,
-    chatId,
-    // dp,
+    chatId = "",
+    phoneNumber,
 }: ChatTilesType) {
     const dispatch = useDispatch();
 
+    const activeContact = useSelector(
+        (state: RootState) => state.dashboard.activeContact
+    );
+    // const chatList = useSelector((state: RootState) => state.chat.chatList);
+    const onClickHandler = async () => {
+        dispatch(setSelectedChat({ chatId: chatId }));
+        dispatch(setActiveContact({ phoneNumber: phoneNumber }));
+    };
     return (
         <div
-            className="hover:bg-surface text-foreground w-full cursor-pointer rounded-2xl px-2 py-1 shadow"
-            onClick={() => {
-                dispatch(setSelectedChat({ chatId: chatId }));
-                // console.log(`selected: ${chatId}`);
-            }}
+            className={`${activeContact === phoneNumber ? "bg-surface" : ""} hover:bg-surface text-foreground w-full cursor-pointer rounded-2xl px-2 py-1 shadow`}
+            onClick={onClickHandler}
         >
             <div className="truncate text-base font-medium">
-                {`${chatDisplayName}`}
+                {chatDisplayName}
             </div>
             <div className="truncate text-sm text-gray-500">{`${lastMessage}`}</div>
         </div>
