@@ -36,6 +36,9 @@ export default function Dashboard() {
             );
             // console.log("contactMap: ", data.data.contactRecords.contactMap)
         }
+
+        // Todo connect on Socket in useEffect
+
     }, [data, dispatch]);
 
     // Loading While Fetching Data

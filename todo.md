@@ -9,3 +9,4 @@
 - rate limit all endpoint
 - do input validation with zod
 - Manage Db Versioning Dev and Production Saparately
+- finish sockets
